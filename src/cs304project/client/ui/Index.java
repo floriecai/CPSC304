@@ -54,6 +54,7 @@ public class Index extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField userField;
+	private JTextField passField;
 	private static JTextField searchField;
 	private static Connection conn;
 	private Listings listing;
@@ -145,8 +146,9 @@ public class Index extends JFrame {
 				ColumnSpec.decode("201px"),
 				ColumnSpec.decode("31px"),
 				ColumnSpec.decode("68px"),
-				ColumnSpec.decode("200px"),
-				ColumnSpec.decode("202px"),},
+				ColumnSpec.decode("100px"),
+				ColumnSpec.decode("75px"),
+				ColumnSpec.decode("150px"),},
 			new RowSpec[] {
 				RowSpec.decode("128px"),
 				FormFactory.PARAGRAPH_GAP_ROWSPEC,
@@ -233,6 +235,11 @@ public class Index extends JFrame {
 		userField = new JTextField();
 		userField.setColumns(10);
 		panel.add(userField, "7, 3, fill, fill");
+		JLabel password = new JLabel("Password");
+		panel.add(password, "8, 3, right, fill");
+		passField = new JTextField();
+		passField.setColumns(10);
+		panel.add(passField, "9, 3, fill, fill");
 		
 		JButton logIn = new JButton("Log in");
 		logIn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -249,7 +256,7 @@ public class Index extends JFrame {
 				}
 				try {
 					stmt = conn.createStatement();
-					String query = "SELECT * FROM RegisteredUser WHERE adminId LIKE " + "'%" + userId + "%'";
+					String query = "SELECT * FROM RegisteredUser WHERE email LIKE " + "'%" + userId + "%'";
 					System.out.println(query);
 					ResultSet rs = stmt.executeQuery(query);
 					while(rs.next()){
