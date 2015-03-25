@@ -10,23 +10,28 @@ import java.awt.Color;
 
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
-
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import cs304project.Connecting;
+
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
+
 import java.awt.Font;
+
+import javax.swing.SwingConstants;
 
 public class UserLogin extends JFrame {
 
@@ -35,9 +40,12 @@ public class UserLogin extends JFrame {
 	private JLabel lblUser;
 	private Connection conn;
 	private AdminBoard adb;
-	private String adminId, adminName;
-	private static String aName;
-	private JTextField userName;
+	private JPasswordField userPass;
+	private String userEmail;
+	private String userPassword;
+	private boolean logged;
+	private MakeReservation mk;
+
 
 	/**
 	 * Launch the application.
@@ -59,8 +67,9 @@ public class UserLogin extends JFrame {
 	 * Create the frame.
 	 */
 	public UserLogin() {
+		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 399, 300);
+		setBounds(100, 100, 418, 302);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -71,8 +80,8 @@ public class UserLogin extends JFrame {
 				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,
 				ColumnSpec.decode("10px"),
-				ColumnSpec.decode("max(93dlu;default):grow"),
-				ColumnSpec.decode("126px"),},
+				ColumnSpec.decode("max(72dlu;default)"),
+				ColumnSpec.decode("70px"),},
 			new RowSpec[] {
 				RowSpec.decode("69px"),
 				RowSpec.decode("14px"),
@@ -83,7 +92,7 @@ public class UserLogin extends JFrame {
 				RowSpec.decode("44px"),
 				RowSpec.decode("23px"),}));
 		
-		JLabel lblNewLabel = new JLabel("New label");
+		JLabel lblNewLabel = new JLabel("");
 		lblNewLabel.setIcon(new ImageIcon(UserLogin.class.getResource("/cs304project/bg_small.png")));
 		contentPane.add(lblNewLabel, "1, 1, 7, 1");
 		
@@ -101,38 +110,36 @@ public class UserLogin extends JFrame {
 		JLabel lblAdminName = new JLabel("Password");
 		contentPane.add(lblAdminName, "2, 6");
 		
-		/*
-		 * Admin login 
-		 */
-		
-		userName = new JTextField();
-		userName.setColumns(10);
-		contentPane.add(userName, "4, 6, 3, 1, fill, default");
+		userPass = new JPasswordField();
+		userPass.setColumns(10);
+		contentPane.add(userPass, "4, 6, 3, 1, fill, default");
 		
 		JButton login = new JButton("Login");
 		login.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Statement stmt;
-				if(userField.getText() != null && userName.getText() != null){
-					adminId = userField.getText().trim();
-					adminName = userName.getText().trim();
+				if(userField.getText() != null && userPass.getPassword() != null){
+					userEmail = userField.getText().trim();
+					userPassword = userPass.getText();
+					setVisible(false);
 				}
 				try {
 					conn = Connecting.getConnection();
-					stmt = conn.createStatement();
-					conn.createStatement();
-					String query = "SELECT * FROM admin WHERE adminId LIKE '%"  + adminId + "%' AND name LIKE '%" + adminName + "%'" ;
+					
+					/*
+					 * Query!!
+					 */
+					String query = "SELECT * FROM RegisteredUser WHERE email LIKE '%"  + userEmail + "%' AND password LIKE '%" + userPassword.toString() + "%'" ;
 					System.out.println(query);
-					ResultSet rs = stmt.executeQuery(query);
-					while(rs.next()){
-						String test = rs.getString("adminId");
-						if(test.contains(adminId)){
-			    		   aName = rs.getString("name");
-							adb = new AdminBoard();
-							adb.setVisible(true);
-			    		   break;
-						}
-			    	}
+					PreparedStatement ps = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
+	                        ResultSet.CONCUR_UPDATABLE);
+					ResultSet rs = ps.executeQuery();
+					if(rs.next()){
+						logged = true;
+						mk = new MakeReservation();
+						mk.setVisible(true);
+					} else
+						logged = false;
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -140,9 +147,4 @@ public class UserLogin extends JFrame {
 		});
 		contentPane.add(login, "4, 8, fill, top");
 	}
-	
-	public static String getAdminName(){
-		return aName;
-	}
-
 }

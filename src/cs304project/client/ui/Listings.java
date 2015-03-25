@@ -43,18 +43,19 @@ public class Listings extends JFrame {
 
 	private JPanel contentPane;
 	private static Listings frame;
-	private JTextField txtCheckInDate;
-	private JTextField txtCheckOutDate;
+	private static JTextField txtCheckInDate;
+	private static JTextField txtCheckOutDate;
 	private JTextField txtCity;
 	private static Connection conn;
 	private static Statement stmt;
 	private JTable table;
-	private JTable localTable;
+	private static JTable localTable;
 	private String c[] = {"Host", "Capacity", "Rating", "Address", "Price"};
 	private String data[][];
 	private Listings list;
 	private JRadioButton[] selecting;
-	private String[] listId;
+	private static String[] listId;
+	private UserLogin userLogin;
 	DefaultTableModel searchTableModel;
 
 	/**
@@ -128,6 +129,10 @@ public class Listings extends JFrame {
 
 				int rowCount = 0;
 				conn = Connecting.getConnection();
+				
+				/*
+				 * Query!
+				 */
 				String query = "select distinct * from ListingPostedIsIn l, AmenitiesIncluded a, Host h, RegisteredUser r where "
 						+ "h.governmentId = l.governmentId and a.listingId = l.listingId and r.email = h.email and l.capacity = " + (comboBox.getSelectedIndex() + 1)
 						+ "  and a.tv like '%" +  amenities[0] + "%' and a.laundry like '%" + amenities[1] + "%' and a.toiletries like '%" + amenities[2] + "%' and a.kitchen like '%" + amenities[3] +"%' and l.listingId in"
@@ -139,17 +144,13 @@ public class Listings extends JFrame {
 				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
                         ResultSet.CONCUR_UPDATABLE);
 				ResultSet rs = stmt.executeQuery(query);
-				
 				rs.last();
 				rowCount = rs.getRow();
-								
-				System.out.println("count " + rowCount);
 				data = new String[rowCount][c.length];
 				listId = new String[rowCount];
 				rs.beforeFirst();
 				
 				 while(rs.next()){
-					 System.out.println(rs.getRow());
 					 listId[rs.getRow()-1] = rs.getString("listingId");
 					 data[rs.getRow()-1][0] = rs.getString("userName");
 					 data[rs.getRow()-1][1] = String.valueOf(rs.getInt("Capacity"));
@@ -210,10 +211,8 @@ public class Listings extends JFrame {
 		book.setHorizontalAlignment(SwingConstants.LEFT);
 		book.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				/*if(localTable.getSelectedRow() == 1){
-					
-				}
-			*/
+					userLogin = new UserLogin();
+					userLogin.setVisible(true);
 			}
 		});
 		txtCity.setText("City");
@@ -321,4 +320,17 @@ public class Listings extends JFrame {
 		);
 		contentPane.setLayout(gl_contentPane);
 	}
+	
+	public static String getSelectedId(){
+			return listId[localTable.getSelectedRow()];
+	}
+	
+	public static Date getCIn(){
+		return 	Date.valueOf(txtCheckInDate.getText());
+	}
+	
+	public static Date getCOut(){
+		return 	Date.valueOf(txtCheckOutDate.getText());
+	}
+	
 }

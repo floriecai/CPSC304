@@ -37,6 +37,7 @@ import cs304project.Connecting;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -61,6 +62,8 @@ public class Index extends JFrame {
 	private UserBoard usb;
 	private static Statement stmt;
 	private JTextField textField;
+	private String userEmail;
+	private String userPassword;
 	
 	/**
 	 * Launch the application.
@@ -96,13 +99,16 @@ public class Index extends JFrame {
 		JLabel cc1 = new JLabel("city - country 2");
 		JLabel cc2 = new JLabel("city - country 3");
 		
-		/*
-		 * Return the top 3 locations with best rating and the avg price of their listings - Need to change the query to get price and avg rating
-		 */
+
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent arg0) {
 				int count = 0;
+				
+				/*
+				 * Query!!!
+				 * Return the top 3 locations with best rating and the avg price of their listings - Need to change the query to get price and avg rating
+				 */
 				String query = "SELECT loc.city, loc.country from Location loc, ListingPostedIsIn list where list.postalCode = loc.postalCode order by list.rating desc ";
 				System.out.println(query);
 				conn = Connecting.getConnection();
@@ -199,6 +205,10 @@ public class Index extends JFrame {
 				String city = searchField.getText();
 				int rowCount = 0;
 				conn = Connecting.getConnection();
+				
+				/*
+				 * Query!!!
+				 */
 				String query = "select * from ListingPostedIsIn l, Host h, RegisteredUser r where h.governmentId = l.governmentId and r.email = h.email and l.listingId in " +
 						"(select distinct l.listingId from Location loc where l.postalCode = loc.postalCode and loc.city like '%" + city + "%')";
 				System.out.println(query);
@@ -226,6 +236,7 @@ public class Index extends JFrame {
 				}
 				listing = new Listings(c, data);
 				listing.setVisible(true);
+				setVisible(false);
 			}
 		});
 		panel.add(search, "3, 3, 2, 1, left, fill");
@@ -257,12 +268,18 @@ public class Index extends JFrame {
 				}
 				try {
 					stmt = conn.createStatement();
-					String query = "SELECT * FROM RegisteredUser WHERE adminId LIKE " + "'%" + userId + "%'";
+					
+					/*
+					 * Query!! It's not corre
+					 */
+					String query = "SELECT * FROM RegisteredUser WHERE email LIKE '%"  + userEmail + "%' AND password LIKE '%" + userPassword.toString() + "%'" ;
 					System.out.println(query);
-					ResultSet rs = stmt.executeQuery(query);
+					PreparedStatement ps = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
+	                        ResultSet.CONCUR_UPDATABLE);
+					ResultSet rs = ps.executeQuery();
 					while(rs.next()){
 						String test = rs.getString("email");
-						if(test.contains(userId)){
+						if(rs.next()){
 			    		   userName = rs.getString("name");
 						}
 						usb = new UserBoard();
