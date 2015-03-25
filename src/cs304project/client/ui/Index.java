@@ -54,13 +54,13 @@ public class Index extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField userField;
-	private JTextField passField;
 	private static JTextField searchField;
 	private static Connection conn;
 	private Listings listing;
 	private static String userName;
 	private UserBoard usb;
 	private static Statement stmt;
+	private JTextField textField;
 	
 	/**
 	 * Launch the application.
@@ -103,12 +103,13 @@ public class Index extends JFrame {
 			@Override
 			public void windowOpened(WindowEvent arg0) {
 				int count = 0;
-				String query = "select loc.city, loc.country from location loc, listingPostedIsIn list where list.postalCode = loc.postalCode order by list.rating desc ";
+				String query = "SELECT loc.city, loc.country from Location loc, ListingPostedIsIn list where list.postalCode = loc.postalCode order by list.rating desc ";
 				System.out.println(query);
 				conn = Connecting.getConnection();
 				try {
-				stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery(query);
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                        ResultSet.CONCUR_UPDATABLE);
+				ResultSet rs = stmt.executeQuery(query);			
 				while(rs.next() && count < 3 ){
 					cc[count] = rs.getString("city").trim() + "-" + rs.getString("country").trim();
 					count++;
@@ -145,16 +146,17 @@ public class Index extends JFrame {
 				ColumnSpec.decode("40dlu"),
 				ColumnSpec.decode("201px"),
 				ColumnSpec.decode("31px"),
-				ColumnSpec.decode("68px"),
-				ColumnSpec.decode("100px"),
-				ColumnSpec.decode("75px"),
-				ColumnSpec.decode("150px"),},
+				ColumnSpec.decode("68px:grow"),
+				ColumnSpec.decode("200px"),
+				ColumnSpec.decode("202px"),},
 			new RowSpec[] {
 				RowSpec.decode("128px"),
 				FormFactory.PARAGRAPH_GAP_ROWSPEC,
-				RowSpec.decode("31px"),
-				RowSpec.decode("71px"),
-				RowSpec.decode("41px"),
+				RowSpec.decode("19px"),
+				RowSpec.decode("46px"),
+				RowSpec.decode("27px"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("150px"),
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -197,25 +199,22 @@ public class Index extends JFrame {
 				String city = searchField.getText();
 				int rowCount = 0;
 				conn = Connecting.getConnection();
-				String query = "select * from listingPostedIsIn l, AmenitiesIncluded list where l.listingId in" +
-						"(select l.listingId from location loc where l.postalCode = loc.postalCode and loc.city like '%" + city + "%')";
+				String query = "select * from ListingPostedIsIn l, Host h, RegisteredUser r where h.governmentId = l.governmentId and r.email = h.email and l.listingId in " +
+						"(select distinct l.listingId from Location loc where l.postalCode = loc.postalCode and loc.city like '%" + city + "%')";
 				System.out.println(query);
 				
 				try {
 				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
                         ResultSet.CONCUR_UPDATABLE);
-				ResultSet rs = stmt.executeQuery(query);
-				
+				ResultSet rs = stmt.executeQuery(query);	
 				rs.last();
-				rowCount = rs.getRow();
-								
+				rowCount = rs.getRow();	
 				System.out.println("count " + rowCount);
-				data = new String[rowCount][c.length];
+				data = new String[rowCount][c.length];	
 				rs.beforeFirst();
 				
 				 while(rs.next()){
-					 System.out.println(rs.getRow());
-					 data[rs.getRow()-1][0] = "John";
+					 data[rs.getRow()-1][0] = rs.getString("userName");
 					 data[rs.getRow()-1][1] = String.valueOf(rs.getInt("Capacity"));
 					 data[rs.getRow()-1][2] = String.valueOf(rs.getDouble("Rating"));
 					 data[rs.getRow()-1][3] = rs.getString("Address");
@@ -235,11 +234,13 @@ public class Index extends JFrame {
 		userField = new JTextField();
 		userField.setColumns(10);
 		panel.add(userField, "7, 3, fill, fill");
-		JLabel password = new JLabel("Password");
-		panel.add(password, "8, 3, right, fill");
-		passField = new JTextField();
-		passField.setColumns(10);
-		panel.add(passField, "9, 3, fill, fill");
+		
+		JLabel lblPassword = new JLabel("Password");
+		panel.add(lblPassword, "6, 4, right, default");
+		
+		textField = new JTextField();
+		panel.add(textField, "7, 4, fill, default");
+		textField.setColumns(10);
 		
 		JButton logIn = new JButton("Log in");
 		logIn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -256,7 +257,7 @@ public class Index extends JFrame {
 				}
 				try {
 					stmt = conn.createStatement();
-					String query = "SELECT * FROM RegisteredUser WHERE email LIKE " + "'%" + userId + "%'";
+					String query = "SELECT * FROM RegisteredUser WHERE adminId LIKE " + "'%" + userId + "%'";
 					System.out.println(query);
 					ResultSet rs = stmt.executeQuery(query);
 					while(rs.next()){
@@ -274,13 +275,13 @@ public class Index extends JFrame {
 				ub.setVisible(true);
 			}
 		});
-		panel.add(logIn, "7, 4, right, top");
+		panel.add(logIn, "7, 5, right, top");
 		
 		JLabel lblNicePlacesTo = new JLabel("Nice Places to Visit");
 		lblNicePlacesTo.setHorizontalTextPosition(SwingConstants.CENTER);
 		lblNicePlacesTo.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNicePlacesTo.setFont(new Font("Myriad Hebrew", Font.BOLD, 40));
-		panel.add(lblNicePlacesTo, "2, 5, 6, 1, default, top");
+		panel.add(lblNicePlacesTo, "1, 7, 7, 1, center, top");
 	
 		cityImage0.setPreferredSize(new Dimension(200, 150));
 		cityImage0.setMinimumSize(new Dimension(200, 150));
@@ -288,15 +289,14 @@ public class Index extends JFrame {
 		cityImage0.setHorizontalAlignment(SwingConstants.CENTER);
 		cityImage0.setMaximumSize(new Dimension(200, 150));
 		cityImage0.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel.add(cityImage0, "2, 7, right, top");
+		panel.add(cityImage0, "2, 9, right, top");
 		
 		cityImage1.setPreferredSize(new Dimension(200, 150));
 		cityImage1.setHorizontalTextPosition(SwingConstants.CENTER);
 		cityImage1.setHorizontalAlignment(SwingConstants.CENTER);
 		cityImage1.setMaximumSize(new Dimension(200, 150));
 		cityImage1.setAlignmentX(0.5f);
-		panel.add(cityImage1, "4, 7, right, top");
-		
+		panel.add(cityImage1, "4, 9, right, top");
 		
 		cityImage2.setMinimumSize(new Dimension(200, 150));
 		cityImage2.setPreferredSize(new Dimension(200, 150));
@@ -304,7 +304,7 @@ public class Index extends JFrame {
 		cityImage2.setHorizontalAlignment(SwingConstants.CENTER);
 		cityImage2.setHorizontalTextPosition(SwingConstants.CENTER);
 		cityImage2.setAlignmentX(0.5f);
-		panel.add(cityImage2, "7, 7, left, top");
+		panel.add(cityImage2, "7, 9, left, top");
 		
 		cc0.setFont(new Font("Myriad Hebrew", Font.BOLD, 14));
 		cc0.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -314,7 +314,7 @@ public class Index extends JFrame {
 		
 		cc0.setHorizontalAlignment(SwingConstants.CENTER);
 		cc0.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel.add(cc0, "2, 9, right, bottom");
+		panel.add(cc0, "2, 11, right, bottom");
 		
 		cc1.setFont(new Font("Myriad Hebrew", Font.BOLD, 14));
 		cc1.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -323,7 +323,7 @@ public class Index extends JFrame {
 		cc1.setMinimumSize(new Dimension(200, 15));
 		cc1.setMaximumSize(new Dimension(200, 15));
 		cc1.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel.add(cc1, "4, 9, fill, top");
+		panel.add(cc1, "4, 11, fill, top");
 		
 		cc2.setFont(new Font("Myriad Hebrew", Font.BOLD, 14));
 		cc2.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -331,21 +331,21 @@ public class Index extends JFrame {
 		cc2.setMinimumSize(new Dimension(70, 14));
 		cc2.setMaximumSize(new Dimension(70, 14));
 		cc2.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel.add(cc2, "7, 9, fill, top");
+		panel.add(cc2, "7, 11, fill, top");
 		
 		JLabel price0 = new JLabel("Price");
 		price0.setPreferredSize(new Dimension(200, 15));
 		price0.setHorizontalAlignment(SwingConstants.CENTER);
-		panel.add(price0, "2, 11, right, top");
+		panel.add(price0, "2, 13, right, top");
 		
 		JLabel price1 = new JLabel("Price");
 		price1.setHorizontalTextPosition(SwingConstants.CENTER);
 		price1.setHorizontalAlignment(SwingConstants.CENTER);
-		panel.add(price1, "4, 11, fill, top");
+		panel.add(price1, "4, 13, fill, top");
 		JLabel price2 = new JLabel("Price");
 		price2.setHorizontalTextPosition(SwingConstants.CENTER);
 		price2.setHorizontalAlignment(SwingConstants.CENTER);
-		panel.add(price2, "7, 11, fill, top");
+		panel.add(price2, "7, 13, fill, top");
 		
 		JLabel lblStaffArea = new JLabel("Administrators Area");
 		lblStaffArea.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -360,7 +360,7 @@ public class Index extends JFrame {
 		lblStaffArea.setBackground(Color.LIGHT_GRAY);
 		lblStaffArea.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblStaffArea.setHorizontalAlignment(SwingConstants.CENTER);
-		panel.add(lblStaffArea, "7, 12, right, bottom");
+		panel.add(lblStaffArea, "7, 14, right, bottom");
 	}
 	/*
 	 * Get user name

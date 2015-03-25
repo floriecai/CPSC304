@@ -5,10 +5,12 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JLabel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
@@ -40,14 +42,20 @@ import javax.swing.ListSelectionModel;
 public class Listings extends JFrame {
 
 	private JPanel contentPane;
+	private static Listings frame;
 	private JTextField txtCheckInDate;
 	private JTextField txtCheckOutDate;
 	private JTextField txtCity;
 	private static Connection conn;
 	private static Statement stmt;
 	private JTable table;
+	private JTable localTable;
 	private String c[] = {"Host", "Capacity", "Rating", "Address", "Price"};
-	String data[][];
+	private String data[][];
+	private Listings list;
+	private JRadioButton[] selecting;
+	private String[] listId;
+	DefaultTableModel searchTableModel;
 
 	/**
 	 * Launch the application.
@@ -56,7 +64,7 @@ public class Listings extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Listings frame = new Listings(null, null);
+					 frame = new Listings(null, null);
 					frame.setVisible(true);
 					conn = Connecting.getConnection();
 				} catch (Exception e) {
@@ -72,43 +80,26 @@ public class Listings extends JFrame {
 	 * @param c 
 	 */
 	public Listings(String[] c, String[][] r) {
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowOpened(WindowEvent arg0) {
-				/*String city = Index.getSearch();
-				int rowCount = 0;
-				conn = Connecting.getConnection();
-				String query = "select * from listingPostedIsIn l, AmenitiesIncluded list where l.listingId in" +
-						"(select l.listingId from location loc where l.postalCode = loc.postalCode and loc.city like '%" + city + "%')";
-				System.out.println(query);
-				
-				try {
-				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-                        ResultSet.CONCUR_UPDATABLE);
-				ResultSet rs = stmt.executeQuery(query);
-				
-				rs.last();
-				rowCount = rs.getRow();
-				
-				
-				System.out.println("count " + rowCount);
-				data = new String[rowCount][c.length];
-				rs.beforeFirst();
-				
-				 while(rs.next()){
-					 System.out.println(rs.getRow());
-					 data[rs.getRow()-1][0] = "John";
-					 data[rs.getRow()-1][1] = String.valueOf(rs.getInt("Capacity"));
-					 data[rs.getRow()-1][2] = String.valueOf(rs.getDouble("Rating"));
-					 data[rs.getRow()-1][3] = rs.getString("Address");
-					 data[rs.getRow()-1][4] = String.valueOf(rs.getDouble("Price"));
-				 }
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
-			}
-		});
+		setResizable(false);
+		JCheckBox checkBox = new JCheckBox("Toiletries");
+		JCheckBox checkBox_1 = new JCheckBox("Laundry");
+		JCheckBox checkBox_2 = new JCheckBox("Television");
+		JCheckBox checkBox_3 = new JCheckBox("Kitchen");
+		JCheckBox[] checkBoxes = {checkBox_2, checkBox_1, checkBox, checkBox_3};
+		char[] amenities = new char[checkBoxes.length];
+		checkBoxes[0].setHorizontalAlignment(SwingConstants.LEFT);
+		JCheckBox intBox = new JCheckBox("Internet");
+		JLabel amnTxt = new JLabel("Amenities");
+		JLabel lblNewLabel_1 = new JLabel("Sort By:");
+		JScrollPane scrollPane = new JScrollPane();
+		JComboBox comboBox = new JComboBox();
+		JComboBox sortBox = new JComboBox();
+		
+		searchTableModel = new DefaultTableModel (r,c);
+		table = new JTable(searchTableModel);
+		table.setRowSelectionAllowed(false);
+		scrollPane.setViewportView(table);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
 		contentPane = new JPanel();
@@ -120,27 +111,67 @@ public class Listings extends JFrame {
 		
 		JButton search = new JButton("Search");
 		search.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent arg0) {
-				int count = 0;
-			
-				String query = "select loc.city, loc.country, price from location loc, listingPostedIsIn list where list.postalCode = loc.postalCode order by list.rating desc ";
+				String c[] = {"Host", "Capacity", "Rating", "Address", "Price"};
+				String data[][] = null;
+				String city = txtCity.getText();
+				String cdIn = txtCheckInDate.getText();
+				String cdOut = txtCheckOutDate.getText();
+				
+				for(int i = 0; i < checkBoxes.length; i++){
+					if(checkBoxes[i].isSelected()){
+						amenities[i] = 'y';
+					} else
+						amenities[i] = 'n';
+				}
+
+				int rowCount = 0;
+				conn = Connecting.getConnection();
+				String query = "select distinct * from ListingPostedIsIn l, AmenitiesIncluded a, Host h, RegisteredUser r where "
+						+ "h.governmentId = l.governmentId and a.listingId = l.listingId and r.email = h.email and l.capacity = " + (comboBox.getSelectedIndex() + 1)
+						+ "  and a.tv like '%" +  amenities[0] + "%' and a.laundry like '%" + amenities[1] + "%' and a.toiletries like '%" + amenities[2] + "%' and a.kitchen like '%" + amenities[3] +"%' and l.listingId in"
+						+ "(select distinct l.listingId from Location loc where l.postalCode = loc.postalCode and loc.city like '%" + city + "%') and l.listingId not in"
+						+ "(select distinct l.listingId from MakesReservation m where l.listingId = m.listingId and (m.checkindate <= TO_DATE('" + cdIn + "', 'YYYY-MM-DD') and m.checkoutdate >= TO_DATE('" +  cdOut + "','YYYY-MM-DD'))) " 
+						+ "order by " + sortBox.getSelectedItem();
 				System.out.println(query);
 				try {
-				stmt = conn.createStatement();
-				//ResultSet rs = stmt.executeQuery(query);
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                        ResultSet.CONCUR_UPDATABLE);
+				ResultSet rs = stmt.executeQuery(query);
 				
-				/*while(rs.next()) {
-					
-					count++;
-					}*/
-				} catch (SQLException e) {
+				rs.last();
+				rowCount = rs.getRow();
+								
+				System.out.println("count " + rowCount);
+				data = new String[rowCount][c.length];
+				listId = new String[rowCount];
+				rs.beforeFirst();
+				
+				 while(rs.next()){
+					 System.out.println(rs.getRow());
+					 listId[rs.getRow()-1] = rs.getString("listingId");
+					 data[rs.getRow()-1][0] = rs.getString("userName");
+					 data[rs.getRow()-1][1] = String.valueOf(rs.getInt("Capacity"));
+					 data[rs.getRow()-1][2] = String.valueOf(rs.getDouble("Rating"));
+					 data[rs.getRow()-1][3] = rs.getString("Address");
+					 data[rs.getRow()-1][4] = String.valueOf(rs.getDouble("Price"));	 
+				 }		
+				 
+				 searchTableModel = new DefaultTableModel (data,c);
+				 localTable = new JTable(searchTableModel);
+				 table.setRowSelectionAllowed(true);
+				 table.setCellSelectionEnabled(false);
+				 scrollPane.setViewportView(localTable);
+				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					e1.printStackTrace();
 				}
+				
 			}
+			
 		});
 
-		
 		txtCheckInDate = new JTextField();
 		txtCheckInDate.addMouseListener(new MouseAdapter() {
 			@Override
@@ -161,7 +192,7 @@ public class Listings extends JFrame {
 		txtCheckOutDate.setText("Check Out ");
 		txtCheckOutDate.setColumns(10);
 		
-		JComboBox comboBox = new JComboBox();
+
 		comboBox.setBackground(Color.WHITE);
 		comboBox.setMaximumRowCount(10);
 		comboBox.setModel(new DefaultComboBoxModel(new String[] {"1 Guest", "2 Guests", "3 Guests", "4 Guests", "5 Guests", "6 Guests", "7 Guests", "8 Guests", "9 Guests", "10 Guests"}));
@@ -174,125 +205,120 @@ public class Listings extends JFrame {
 				txtCity.setText("");
 			}
 		});
+		
+		JButton book = new JButton("Book!");
+		book.setHorizontalAlignment(SwingConstants.LEFT);
+		book.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				/*if(localTable.getSelectedRow() == 1){
+					
+				}
+			*/
+			}
+		});
 		txtCity.setText("City");
 		txtCity.setColumns(10);
 		
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"Rating", "Price: Low to High", "Price: High to Low"}));
-		comboBox_1.setSelectedIndex(0);
-		comboBox_1.setMaximumRowCount(10);
-		comboBox_1.setBackground(Color.WHITE);
+
+		sortBox.setModel(new DefaultComboBoxModel(new String[] {"Rating", "Price"}));
+		sortBox.setSelectedIndex(0);
+		sortBox.setMaximumRowCount(10);
+		sortBox.setBackground(Color.WHITE);
 		
-		JLabel lblNewLabel_1 = new JLabel("Sort By:");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		amnTxt.setToolTipText("");
+		amnTxt.setHorizontalAlignment(SwingConstants.CENTER);
+		amnTxt.setFont(new Font("Tahoma", Font.BOLD, 12));
 		
-		JLabel lblNewLabel_2 = new JLabel("Amenities");
-		lblNewLabel_2.setToolTipText("");
-		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 12));
+		checkBoxes[3].setHorizontalAlignment(SwingConstants.LEFT);
 		
-		JCheckBox kitBox = new JCheckBox("Kitchen");
-		kitBox.setHorizontalAlignment(SwingConstants.LEFT);
-		
-		JCheckBox tvBox = new JCheckBox("Television");
-		tvBox.setHorizontalAlignment(SwingConstants.LEFT);
-		
-		JCheckBox intBox = new JCheckBox("Internet");
-		
-		JCheckBox laudryBox = new JCheckBox("Laundry");
-		
-		JCheckBox tolBox = new JCheckBox("Toiletries");
-		
-		JScrollPane scrollPane = new JScrollPane();
-		//JScrollPane scrollPane = new JScrollPane(table);
-		
+
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.setEnabled(false);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 774, GroupLayout.PREFERRED_SIZE)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 774, GroupLayout.PREFERRED_SIZE)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(tolBox)
-							.addPreferredGap(ComponentPlacement.RELATED))
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(laudryBox, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-									.addComponent(lblNewLabel_2, 0, 0, Short.MAX_VALUE)
-									.addComponent(tvBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-									.addComponent(intBox, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
-									.addComponent(kitBox, GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE))
-								.addGap(18))))
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(txtCity, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(txtCheckInDate, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(txtCheckOutDate, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(comboBox_1, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblNewLabel_1, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
-							.addComponent(search))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(13)
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 650, Short.MAX_VALUE)
-							.addContainerGap())))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(10)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(checkBox_3, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE)
+										.addComponent(checkBox_2)
+										.addComponent(intBox, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
+										.addComponent(checkBox_1, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE)
+										.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+											.addComponent(book)
+											.addComponent(checkBox))))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addContainerGap()
+									.addComponent(amnTxt, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE)))
+							.addGap(28)
+							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 663, GroupLayout.PREFERRED_SIZE)))
+					.addGap(10))
+				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+					.addGap(124)
+					.addComponent(txtCity, GroupLayout.PREFERRED_SIZE, 104, GroupLayout.PREFERRED_SIZE)
+					.addGap(6)
+					.addComponent(txtCheckInDate, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+					.addGap(6)
+					.addComponent(txtCheckOutDate, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+					.addGap(10)
+					.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 107, GroupLayout.PREFERRED_SIZE)
+					.addGap(10)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblNewLabel_1, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+						.addComponent(sortBox, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+					.addComponent(search)
+					.addGap(46))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(lblNewLabel)
-					.addGap(11)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addGap(8)
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-									.addComponent(txtCity, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-									.addComponent(txtCheckInDate, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-									.addComponent(txtCheckOutDate, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-									.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addGap(5)
-								.addComponent(search, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblNewLabel_1)
-							.addGap(1)
-							.addComponent(comboBox_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.addGap(25)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(3)
+							.addComponent(txtCity, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(3)
+							.addComponent(txtCheckInDate, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(3)
+							.addComponent(txtCheckOutDate, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(3)
+							.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+							.addComponent(search, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+							.addGroup(gl_contentPane.createSequentialGroup()
+								.addComponent(lblNewLabel_1)
+								.addGap(1)
+								.addComponent(sortBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(amnTxt, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE)
 							.addGap(18)
-							.addComponent(lblNewLabel_2, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE)
-							.addGap(12)
-							.addComponent(kitBox)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(tvBox)
+							.addComponent(checkBox_3)
+							.addComponent(checkBox_2)
 							.addGap(3)
 							.addComponent(intBox)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(laudryBox)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(tolBox)
-							.addGap(23))
+							.addComponent(checkBox_1)
+							.addGap(3)
+							.addComponent(checkBox)
+							.addGap(42)
+							.addComponent(book))
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(20)
-							.addComponent(scrollPane)
-							.addContainerGap())))
+							.addGap(2)
+							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 352, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap())
 		);
-		
-		table = new JTable(r, c);
-		scrollPane.setViewportView(table);
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.setEnabled(false);
 		contentPane.setLayout(gl_contentPane);
 	}
 }
