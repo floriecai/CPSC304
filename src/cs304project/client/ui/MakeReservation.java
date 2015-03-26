@@ -125,9 +125,6 @@ public class MakeReservation extends JFrame {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
-
-
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 469);
 		contentPane = new JPanel();
@@ -344,6 +341,7 @@ public class MakeReservation extends JFrame {
 				 * STEP 2: ADD TO APPROPRIATE PAYMENT METHOD
 				 * STEP 3: ADD TO MAKESRESERVATION
 				 */
+
 				conn = Connecting.getConnection();
 				Reservation reservation = new Reservation(conn);
 

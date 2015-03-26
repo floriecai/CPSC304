@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -48,18 +49,11 @@ public class Listings extends JFrame {
 	private static JTextField txtCheckOutDate;
 	private JTextField txtCity;
 	private static Connection conn;
-	private static Statement stmt;
 	private JTable table;
+	private Listing list;
 	private static JTable localTable;
-	private String c[] = {"Host", "Capacity", "Rating", "Address", "Price"};
-	private String data[][];
-	private Listings list;
-	private JRadioButton[] selecting;
-	private static int listId;
 	private UserLogin userLogin;
 	DefaultTableModel searchTableModel;
-
-
 	private static Listing listing; 
 	/**
 	 * Launch the application.
@@ -71,8 +65,6 @@ public class Listings extends JFrame {
 					frame = new Listings(null, null);
 					frame.setVisible(true);
 					conn = Connecting.getConnection();
-
-				
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -131,8 +123,6 @@ public class Listings extends JFrame {
 					} else
 						amenities[i] = 'F';
 				}
-
-				int rowCount = 0;
 				conn = Connecting.getConnection();
 
 				/*
@@ -159,7 +149,7 @@ public class Listings extends JFrame {
 				txtCheckInDate.setText("");
 			}
 		});
-		txtCheckInDate.setText("Check In: YYYY MM DD");
+		txtCheckInDate.setText("Check In: YYYY-MM-DD");
 		txtCheckInDate.setColumns(10);
 
 		txtCheckOutDate = new JTextField();
@@ -169,7 +159,7 @@ public class Listings extends JFrame {
 				txtCheckOutDate.setText("");
 			}
 		});
-		txtCheckOutDate.setText("Check Out: YYYY MM DD");
+		txtCheckOutDate.setText("Check Out: YYYY-MM-DD");
 		txtCheckOutDate.setColumns(10);
 
 
@@ -190,8 +180,12 @@ public class Listings extends JFrame {
 		book.setHorizontalAlignment(SwingConstants.LEFT);
 		book.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				userLogin = new UserLogin();
-				userLogin.setVisible(true);
+				System.out.println( localTable.getSelectedRow());
+				if(localTable.getSelectedRow() >= 0){
+					userLogin = new UserLogin();
+					userLogin.setVisible(true);
+				}else
+					JOptionPane.showMessageDialog(null, "Please, select one listing");
 			}
 		});
 		txtCity.setText("City");

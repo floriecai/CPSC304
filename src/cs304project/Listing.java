@@ -1,10 +1,13 @@
 package cs304project;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import javax.swing.JOptionPane;
 
 public class Listing extends Transactions{
 
@@ -96,7 +99,7 @@ public class Listing extends Transactions{
 					+ "h.governmentId = l.governmentId AND "
 					+ "a.listingId = l.listingId AND "
 					+ "r.email = h.email AND "
-					+ "l.capacity = " + capacity
+					+ "l.capacity >= " + capacity
 					+ "  AND a.tv like '%" +  amenities[0] + "%' and a.laundry like '%" + amenities[1] + "%' and a.toiletries like '%" + amenities[2] + "%' and a.kitchen like '%" + amenities[3] +"%' AND"
 					+ " l.listingId in"
 					+ "(SELECT DISTINCT l.listingId FROM Location loc "
@@ -128,14 +131,13 @@ public class Listing extends Transactions{
 			}		
 
 		} catch (SQLException e) {
-
+			e.getMessage();
 		}
 		return data;
 	}
 	
 	public int listId(int selection){
 		return listId[selection];
-		
 	}
 
 	// Find cheapest listing's address, city, and postalcode and the price 
