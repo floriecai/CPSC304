@@ -364,5 +364,4 @@ public class Admin_Queries {
 		} 
 		return transactionTuples;
 	}
-	
 }
