@@ -4,13 +4,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
-public class Admin_Queries extends Transactions {
+import cs304project.client.ui.AdminBoard;
+
+public class Admin_Queries {
 	
-	Connection conn; 
+	private static Connection conn; 
 	
-	public Admin_Queries(Connection conn) {
-		super(conn); 
+	public Admin_Queries() {
+		//super(conn); 
 	}
 	
 	public ResultSet allRegisteredUsers() {
@@ -79,21 +82,32 @@ public class Admin_Queries extends Transactions {
 	}
 	
 	//SHOULD ONLY RETURN 1 ADMIN 
-	public ResultSet findAdminLogin(String adminId, String password) {
-		String admins = "SELECT DISTINCT * FROM admin WHERE adminId LIKE '%"  + adminId + "%' AND password LIKE '%" + password + "%'" ;
-		PreparedStatement ps;
+	public String findAdminLogin(String adminId, String password) {
+		String admins = "SELECT DISTINCT * FROM admin WHERE adminId = "  + adminId + " AND password LIKE '%" + password + "%'" ;
+		PreparedStatement ps = null;
 		ResultSet rs = null; 
-		
+		List<String> args = null;
+		conn = Connecting.getConnection();
 		try {
 			ps = conn.prepareStatement(admins);
 			rs = ps.executeQuery();
-			
+			try {
+				if(rs.next()){
+					String adminIdName = rs.getString("adminId");
+					if(adminIdName.contains(adminId)){
+						return rs.getString("name");
+					}
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			ps.close();
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return rs;
+		return "404";
 	}
 	
 	// An inactive user is defined as having both:

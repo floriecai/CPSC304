@@ -35,7 +35,7 @@ public class Admin extends JFrame {
 	private JPanel contentPane;
 	private JTextField userField;
 	private JLabel lblUser;
-	private Connection conn;
+	private static Connection conn;
 	private AdminBoard adb;
 	private String adminId, adminPassword;
 	private static String aName;
@@ -51,6 +51,7 @@ public class Admin extends JFrame {
 				try {
 					Admin frame = new Admin();
 					frame.setVisible(true);
+					conn = Connecting.getConnection();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -118,30 +119,18 @@ public class Admin extends JFrame {
 					adminId = userField.getText().trim();
 					adminPassword = userName.getText().trim();
 				}
+				admin = new Admin_Queries(); 
 
-				conn = Connecting.getConnection(); 
-				admin = new Admin_Queries(conn); 
-
-				ResultSet rs = admin.findAdminLogin(adminId, adminPassword);
-
-				if (rs != null) {
-					try {
-						while(rs.next()){
-							String test = rs.getString("adminId");
-							if(test.contains(adminId)){
-								aName = rs.getString("name");
-								adb = new AdminBoard();
-								adb.setVisible(true);
-								System.out.println("Successful login");
-								break;
-							}
-						}
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				aName = admin.findAdminLogin(adminId, adminPassword);
+				if (!(aName.equals("404"))) {
+					adb = new AdminBoard();
+					adb.setVisible(true);
+					System.out.println("Successful login");	
+				} else {
+					System.out.println("Failed login");	
 				}
-				else System.out.println("NO ADMIN MATCHES");
+
+
 			}
 		});
 		contentPane.add(login, "2, 8, 3, 1, fill, top");
