@@ -21,15 +21,15 @@ CREATE TABLE Admin (adminId INTEGER, name VARCHAR(40), password VARCHAR (40),
 CREATE TABLE RegisteredUser (email VARCHAR (40), name VARCHAR (40), password VARCHAR(40),
 	PRIMARY KEY (email));
 
-CREATE TABLE Host (governmentId VARCHAR (20), email VARCHAR (40), phoneNumber CHAR(10), name VARCHAR(40),
+CREATE TABLE Host (governmentId VARCHAR (30), email VARCHAR (40), phoneNumber CHAR(10), name VARCHAR(40),
 	PRIMARY KEY (governmentId), 
 	UNIQUE (email),
-	FOREIGN KEY (email) REFERENCES RegisteredUser ON DELETE CASCADE);
+	FOREIGN KEY (email) REFERENCES RegisteredUser ON DELETE CASCADE ON UPDATE CASCADE);
 
 
-CREATE TABLE Verifies (adminId INTEGER, governmentId VARCHAR(20),
-	PRIMARY KEY (adminId, governmentId),
-	FOREIGN KEY (adminId) REFERENCES Admin ON DELETE CASCADE,
+CREATE TABLE Verifies (adminId INTEGER, governmentId VARCHAR(30),
+	PRIMARY KEY (governmentId),
+	FOREIGN KEY (adminId) REFERENCES Admin ON DELETE SET DEFAULT,
 	FOREIGN KEY (governmentId) REFERENCES Host ON DELETE CASCADE);
 	
 CREATE TABLE Location (postalCode CHAR(6), city VARCHAR (30), country VARCHAR(30),
