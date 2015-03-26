@@ -234,6 +234,13 @@ public class AdminBoard extends JFrame {
 				RowSpec.decode("23px"),}));
 		contentPane.add(lblNewLabel, "8, 2, center, top");
 		
+		JButton btnHosts = new JButton("Hosts");
+		btnHosts.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		contentPane.add(btnHosts, "5, 4, center, top");
+		
 	
 		contentPane.add(panelTransactions, "2, 6, fill, fill");
 		
@@ -267,7 +274,7 @@ public class AdminBoard extends JFrame {
 		});
 		panelTransactions.add(btnNewButton_3);
 		contentPane.add(btnViewUsers, "4, 4, left, top");
-		contentPane.add(btnNewButton, "6, 4, 2, 1, left, top");
+		contentPane.add(btnNewButton, "6, 4, 2, 1, center, top");
 		contentPane.add(btnListings, "8, 4, right, top");
 		contentPane.add(panelUser, "2, 6, fill, fill");
 		contentPane.add(scrollPane, "4, 6, 5, 1, fill, fill");

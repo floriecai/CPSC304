@@ -398,6 +398,12 @@ public class Index extends JFrame {
 				setVisible(false);
 			}
 		});
+		
+		JButton btnNewButton = new JButton("New button");
+		panel.add(btnNewButton, "2, 14");
+		
+		JButton btnNewButton_1 = new JButton("New button");
+		panel.add(btnNewButton_1, "4, 14, center, default");
 		lblStaffArea.setBackground(Color.LIGHT_GRAY);
 		lblStaffArea.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblStaffArea.setHorizontalAlignment(SwingConstants.CENTER);
