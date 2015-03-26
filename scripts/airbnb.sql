@@ -21,14 +21,14 @@ CREATE TABLE Admin (adminId INTEGER, name VARCHAR(40), password VARCHAR (40),
 CREATE TABLE RegisteredUser (email VARCHAR (40), name VARCHAR (40), password VARCHAR(40),
 	PRIMARY KEY (email));
 
-CREATE TABLE Host (governmentId VARCHAR (30), email VARCHAR (40), phoneNumber CHAR(10),
-	PRIMARY KEY (governmentId),
+CREATE TABLE Host (governmentId VARCHAR (20), email VARCHAR (40), phoneNumber CHAR(10), name VARCHAR(40),
+	PRIMARY KEY (governmentId), 
 	UNIQUE (email),
 	FOREIGN KEY (email) REFERENCES RegisteredUser ON DELETE CASCADE);
 
 
 CREATE TABLE Verifies (adminId INTEGER, governmentId VARCHAR(20),
-	PRIMARY KEY (adminId, GovernmentId),
+	PRIMARY KEY (adminId, governmentId),
 	FOREIGN KEY (adminId) REFERENCES Admin ON DELETE CASCADE,
 	FOREIGN KEY (governmentId) REFERENCES Host ON DELETE CASCADE);
 	
