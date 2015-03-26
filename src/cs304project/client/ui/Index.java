@@ -257,6 +257,16 @@ public class Index extends JFrame {
 		
 		JButton btnSignUp = new JButton("Sign up");
 		panel.add(btnSignUp, "3, 4, 2, 1, left, default");
+		
+		btnSignUp.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				UserRegister registering = new UserRegister();
+				registering.setVisible(true);
+			}
+			
+		});
 
 		JLabel lblPassword = new JLabel("Password");
 		panel.add(lblPassword, "6, 4, right, default");
