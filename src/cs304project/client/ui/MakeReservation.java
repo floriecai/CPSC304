@@ -123,8 +123,6 @@ public class MakeReservation extends JFrame {
 			e1.printStackTrace();
 		}
 		
-
-		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 469);
 		contentPane = new JPanel();
@@ -337,6 +335,8 @@ public class MakeReservation extends JFrame {
 				/*
 				 * Insert the reservation and transaction to their tables
 				 */
+				
+				
 			}
 		});
 		btnCofirm.setFont(new Font("Tahoma", Font.BOLD, 14));

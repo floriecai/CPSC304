@@ -5,7 +5,9 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.Color;
 
@@ -16,6 +18,7 @@ import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +26,9 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JLabel;
 
 import cs304project.Admin_Queries;
+import cs304project.Listing;
+
+import javax.swing.JScrollPane;
 
 public class AdminBoard extends JFrame {
 
@@ -31,6 +37,11 @@ public class AdminBoard extends JFrame {
 	private Index index;
 	private static AdminBoard frame;
 	private static Admin_Queries admin; 
+	private static JTable localTable;
+	private static Listing listing; 
+	DefaultTableModel searchTableModel;
+	private static Connection conn;
+	
 
 
 	/**
@@ -55,7 +66,7 @@ public class AdminBoard extends JFrame {
 	 */
 	public AdminBoard() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 198);
+		setBounds(100, 100, 800, 500);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -63,21 +74,31 @@ public class AdminBoard extends JFrame {
 		aName = Admin.getAdminName();
 		JLabel lblNewLabel = new JLabel("Welcome " + aName);
 		JButton btnViewUsers = new JButton("Users");
+		JScrollPane scrollPane = new JScrollPane();
+		
 		btnViewUsers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				admin = new Admin_Queries();
-				
-				List<String> userList = new ArrayList<String>();
+				String c[] = {"User Name", "User Email"};
+				String[][] userList;
 				userList = admin.findUsers();
-				for (String s : userList) {
-					System.out.println(s);
-				}
+				searchTableModel = new DefaultTableModel (userList,c);
+				localTable = new JTable(searchTableModel);
+				scrollPane.setViewportView(localTable);
 			}
 		});
 		
 		JButton btnNewButton = new JButton("Transactions");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				admin = new Admin_Queries();
+				String c[] = {"Transaction ID", "Price", "City", "Time", "Address"};
+				listing = new Listing(conn);
+				String[][] transactionList;
+				transactionList = admin.findTransactions();
+				searchTableModel = new DefaultTableModel (transactionList,c);
+				localTable = new JTable(searchTableModel);
+				scrollPane.setViewportView(localTable);
 			}
 		});
 		
@@ -93,33 +114,35 @@ public class AdminBoard extends JFrame {
 		btnListings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				admin = new Admin_Queries();
-				
-				List<String> listingList = new ArrayList<String>();
+				String c[] = {"Postal Code", "Price", "City", "Rating"};
+				listing = new Listing(conn);
+				String[][] listingList;
 				listingList = admin.findListings();
-				for (String s : listingList) {
-					System.out.println(s);
-				}
+				searchTableModel = new DefaultTableModel (listingList,c);
+				localTable = new JTable(searchTableModel);
+				scrollPane.setViewportView(localTable);
 			}
 		});
+		
+
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(24)
+					.addGap(101)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
+						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
 							.addComponent(btnViewUsers)
-							.addPreferredGap(ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
-							.addComponent(btnNewButton)
-							.addGap(76)
-							.addComponent(btnListings))
-						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-							.addContainerGap(357, Short.MAX_VALUE)
-							.addComponent(lblNewLabel))
-						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-							.addContainerGap(345, Short.MAX_VALUE)
-							.addComponent(btnLogOut)))
+							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(btnNewButton)
+									.addGap(193)
+									.addComponent(btnListings))
+								.addComponent(btnLogOut)))
+						.addComponent(lblNewLabel))
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
@@ -131,9 +154,10 @@ public class AdminBoard extends JFrame {
 						.addComponent(btnViewUsers)
 						.addComponent(btnListings)
 						.addComponent(btnNewButton))
-					.addPreferredGap(ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
-					.addComponent(btnLogOut)
-					.addContainerGap())
+					.addGap(18)
+					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 349, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(btnLogOut))
 		);
 		contentPane.setLayout(gl_contentPane);
 	}

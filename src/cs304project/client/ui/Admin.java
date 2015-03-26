@@ -126,6 +126,7 @@ public class Admin extends JFrame {
 					adb = new AdminBoard();
 					adb.setVisible(true);
 					System.out.println("Successful login");	
+					setVisible(false);
 				} else {
 					System.out.println("Failed login");	
 				}

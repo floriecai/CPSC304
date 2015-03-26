@@ -18,6 +18,7 @@ import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JPasswordField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 
@@ -63,7 +64,7 @@ public class Index extends JFrame {
 	private static String userName;
 	private UserBoard usb;
 	private static Statement stmt;
-	private JTextField textField;
+	private JPasswordField userPass;
 	private String userEmail;
 	private String userPassword;
 
@@ -82,7 +83,6 @@ public class Index extends JFrame {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-
 			}
 		});
 	}
@@ -254,9 +254,9 @@ public class Index extends JFrame {
 		JLabel lblPassword = new JLabel("Password");
 		panel.add(lblPassword, "6, 4, right, default");
 
-		textField = new JTextField();
-		panel.add(textField, "7, 4, fill, default");
-		textField.setColumns(10);
+		userPass = new JPasswordField();
+		panel.add(userPass, "7, 4, fill, default");
+		userPass.setColumns(10);
 
 		JButton logIn = new JButton("Log in");
 		logIn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -274,17 +274,14 @@ public class Index extends JFrame {
 				} else {
 					return;
 				}
-				if(textField.getText() != null){
-					userPassword = textField.getText().trim();
+				if(userPass.getText() != null){
+					userPassword = userPass.getText().trim();
 				} else {
 					return;
 				}
 				try {
 					stmt = conn.createStatement();
 
-					/*
-					 * Query!! It's not corre
-					 */
 					String query = "SELECT * FROM RegisteredUser WHERE email LIKE '%"  + userId + "%' AND password LIKE '%" + userPassword + "%'" ;
 					System.out.println(query);
 					PreparedStatement ps = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -294,7 +291,7 @@ public class Index extends JFrame {
 					if(rs.next()){
 						email = rs.getString("email");
 						userName = rs.getString("name");
-						usb = new UserBoard();
+						usb = new UserBoard(email, userName);
 						usb.setVisible(true);
 					}
 				} catch (SQLException e) {
@@ -381,7 +378,7 @@ public class Index extends JFrame {
 			public void mouseClicked(MouseEvent arg0) {
 				Admin admin = new Admin();
 				admin.setVisible(true);
-
+				setVisible(false);
 			}
 		});
 		lblStaffArea.setBackground(Color.LIGHT_GRAY);

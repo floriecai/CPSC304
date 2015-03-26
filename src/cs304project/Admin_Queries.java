@@ -144,19 +144,23 @@ public class Admin_Queries {
 	}
 
 	//Admin helper to look at all users ever registered
-	public List<String> findUsers() {
+	public String[][] findUsers() {
 		ResultSet rs = null;
 		String users = "SELECT * FROM RegisteredUser";
-		List<String> usersTuples = new ArrayList<String>();
+		String[][] usersTuples = null;
 
 		try {
-			PreparedStatement ps= conn.prepareStatement(users);
+			PreparedStatement ps= conn.prepareStatement(users, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
 			rs = ps.executeQuery();
+			rs.last();
+			int rowCount = rs.getRow();
+			usersTuples = new String[rowCount][2];
+			rs.beforeFirst();
+			
 			while(rs.next()){
-				String userName = rs.getString("name");
-				String email = rs.getString("email");
-				String tuple = userName + "," + email;
-				usersTuples.add(tuple);
+				usersTuples[rs.getRow()-1][0] = rs.getString("name");
+				usersTuples[rs.getRow()-1][1] = rs.getString("email");
 			}
 			ps.close();
 			return usersTuples;
@@ -169,52 +173,59 @@ public class Admin_Queries {
 	}
 	
 	// Admin helper to get all listings ever made
-	public List<String> findListings() {
+	public String[][] findListings() {
 		ResultSet rs = null;
 		String listings = "SELECT * FROM ListingPostedIsIn LP, Location L WHERE L.postalCode = LP.postalCode";
-		List<String> listingTuples = new ArrayList<String>();
-
+		String[][] listingTuple = null;
+		
 		try {
-			PreparedStatement ps= conn.prepareStatement(listings);
+			PreparedStatement ps = conn.prepareStatement(listings, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
 			rs = ps.executeQuery();
+			rs.last();
+			int rowCount = rs.getRow();
+			listingTuple = new String[rowCount][4];
+			rs.beforeFirst();
+			
 			while(rs.next()){
-				String postalCode = rs.getString("postalCode").trim();
-				String price = rs.getString("price");
-				String city = rs.getString("city");
-				String rating = rs.getString("rating");
-				String tuple = city + "," + postalCode + "," + price + "," + rating;
-				listingTuples.add(tuple);
+				listingTuple[rs.getRow()-1][0] = rs.getString("postalCode").trim();
+				listingTuple[rs.getRow()-1][1] = rs.getString("price");
+				listingTuple[rs.getRow()-1][2] = rs.getString("city");
+				listingTuple[rs.getRow()-1][3] = rs.getString("rating");
 			}
 			ps.close();
-			return listingTuples;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
-		return listingTuples;
+		return listingTuple;
 	}
 	
 	
 	//Admin transaction query helper
-	public List<String> findTransactions() {
+	public String[][] findTransactions() {
 		ResultSet rs = null;
 		String listings = "SELECT T.transactionId, T.price, T.time, L.city, LP.address FROM Transaction T, ListingPostedIsIn LP, Location L where LP.listingId = T.listingId AND L.postalCode = LP.postalCode";
-		List<String> transactionTuples = new ArrayList<String>();
+		String[][] transactionTuples = null;
 
 		try {
-			PreparedStatement ps= conn.prepareStatement(listings);
+			PreparedStatement ps= conn.prepareStatement(listings, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
 			rs = ps.executeQuery();
+			
+			rs.last();
+			int rowCount = rs.getRow();
+			transactionTuples = new String[rowCount][5];
+			rs.beforeFirst();
+			
 			while(rs.next()){
-				String transactionId = rs.getString("transactionId");
-				String price = rs.getString("price");
-				String city = rs.getString("city");
-				String time = rs.getString("time");
-				String address = rs.getString("address");
-				String tuple = transactionId + "," + address + "," + city + "," + time + "," + price;
-				transactionTuples.add(tuple);
+				transactionTuples[rs.getRow()-1][0] = rs.getString("transactionId");
+				transactionTuples[rs.getRow()-1][1] = rs.getString("price");
+				transactionTuples[rs.getRow()-1][2] = rs.getString("city");
+				transactionTuples[rs.getRow()-1][3] = rs.getString("time");
+				transactionTuples[rs.getRow()-1][4] = rs.getString("address");
 			}
 			ps.close();
-			return transactionTuples;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
