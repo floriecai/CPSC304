@@ -12,6 +12,7 @@ import cs304project.client.ui.AdminBoard;
 public class Admin_Queries {
 	
 	private static Connection conn; 
+	private static int admin;
 	
 	public Admin_Queries() {
 		//super(conn); 
@@ -37,25 +38,33 @@ public class Admin_Queries {
 		return rs;
 	}
 	
-	public ResultSet allVerifiedHosts() {
-		PreparedStatement ps; 
+	public String[][] allVerifiedHosts() { 
 		ResultSet rs = null;
+		String[][] usersVerified = null;
 		
-		String verified = "SELECT H.email, R.name"
-				+ "FROM Verifies V, Host H, RegisteredUsers R"
-				+ "WHERE V.governmentId = H.governmentId";
+		String verified = "SELECT R.name, R.email " 
+				+ "FROM Host H, Verifies V, RegisteredUser R "
+				+ "WHERE H.governmentId = V.governmentId AND H.email = R.email";
 		
 		try {
-			ps = conn.prepareStatement(verified);
+			PreparedStatement ps = conn.prepareStatement(verified, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
 			rs = ps.executeQuery(); 
+			rs.last();
+			int rowCount = rs.getRow();
+			usersVerified = new String[rowCount][2];
+			rs.beforeFirst();
 			
-			ps.close();
-		
+			while(rs.next()){
+				usersVerified[rs.getRow()-1][0] = rs.getString("name");
+				usersVerified[rs.getRow()-1][1] = rs.getString("email");
+			}
+			ps.close();	
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
-		return rs;	
+		return usersVerified;
 	}
 	
 	//Find a registered user given an email (for login purposes)
@@ -96,6 +105,7 @@ public class Admin_Queries {
 				if(rs.next()){
 					String adminIdName = rs.getString("adminId");
 					if(adminIdName.contains(adminId)){
+						admin = rs.getInt("adminId");
 						return rs.getString("name");
 					}
 				}
@@ -117,12 +127,13 @@ public class Admin_Queries {
 	// return Inactive users name and email
 	
 	// inactive string = All registered users NOT IN Reservations or PostedListings 
-	public ResultSet findInactiveUsers() {
+	public String[][] findInactiveUsers() {
+		String[][] usersInactive = null;
 		String inactive =  "SELECT R.name, R.email "
 				+ "FROM RegisteredUser R "
 				+ "WHERE NOT EXISTS "
 				+ "(SELECT H.email "
-				+ " FROM MakesReservation M, Transaction T, Host H, ListingPostedIsIn L, "
+				+ " FROM MakesReservation M, Transaction T, Host H, ListingPostedIsIn L "
 				+ "WHERE T.transactionId = M.transactionId AND "
 				+ "L.governmentId = H.governmentId AND "
 				+ "L.listingId = M.listingId AND "
@@ -132,15 +143,46 @@ public class Admin_Queries {
 		ResultSet rs = null;
 
 		try {
-			PreparedStatement ps= conn.prepareStatement(inactive);
-			rs = ps.executeQuery();
-			
+			PreparedStatement ps = conn.prepareStatement(inactive, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+			rs = ps.executeQuery(); 
+			rs.last();
+			int rowCount = rs.getRow();
+			usersInactive = new String[rowCount][2];
+			rs.beforeFirst();
+			while(rs.next()){
+				usersInactive[rs.getRow()-1][0] = rs.getString("name");
+				usersInactive[rs.getRow()-1][1] = rs.getString("email");
+			}
 			ps.close();
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
-		return rs;
+		return usersInactive;
+	}
+	
+	// Verifies an user, inserting his governmentID into Verified table
+	public boolean verifyUser(int adminId, String governmentId) {
+
+		ResultSet rs = null;
+
+		PreparedStatement ps; 
+
+		try {
+			ps = conn.prepareStatement("INSERT INTO Verifies VALUES (?, ?)"); 
+
+			ps.setInt(1, adminId);
+			ps.setString(2, governmentId);
+			ps.executeUpdate();
+			ps.close(); 
+
+			System.out.println("A new user was verified!");
+			return true;
+		} catch (SQLException e) {
+			System.out.println("Could not insert because: ");
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	//Admin helper to look at all users ever registered
@@ -161,6 +203,33 @@ public class Admin_Queries {
 			while(rs.next()){
 				usersTuples[rs.getRow()-1][0] = rs.getString("name");
 				usersTuples[rs.getRow()-1][1] = rs.getString("email");
+			}
+			ps.close();
+			return usersTuples;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		// TODO Auto-generated method stub
+		return usersTuples;
+	}
+	
+	// Finds an user by his email and name and returns his govId
+	public String findUsersGovId(String email) {
+		ResultSet rs = null;
+		String users = "SELECT h.governmentId FROM Host h WHERE h.email = ?";
+		String usersTuples = null;
+
+		try {
+			PreparedStatement ps= conn.prepareStatement(users, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+			ps.setString(1, email);
+			
+			rs = ps.executeQuery();
+			
+			if(rs.next()){
+				usersTuples = rs.getString("governmentId");
+				System.out.println(usersTuples);
 			}
 			ps.close();
 			return usersTuples;
@@ -231,5 +300,9 @@ public class Admin_Queries {
 			e.printStackTrace();
 		} 
 		return transactionTuples;
+	}
+	
+	public int getAdminId(){
+		return admin;
 	}
 }
