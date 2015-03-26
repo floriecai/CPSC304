@@ -78,6 +78,13 @@ public class AdminBoard extends JFrame {
 		JButton btnNewButton = new JButton("Transactions");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+			admin = new Admin_Queries(); 
+			
+			List<String> transactionList = new ArrayList<String>(); 
+			transactionList = admin.findTransactions(); 
+			for (String s: transactionList)
+				System.out.println(s);
+			
 			}
 		});
 		

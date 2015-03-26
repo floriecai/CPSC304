@@ -13,9 +13,7 @@ public class Admin_Queries {
 	
 	private static Connection conn; 
 	
-	public Admin_Queries() {
-		//super(conn); 
-	}
+	public Admin_Queries() {}
 	
 	public ResultSet allRegisteredUsers() {
 		String all = "SELECT * FROM RegisteredUsers";

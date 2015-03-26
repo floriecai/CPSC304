@@ -311,5 +311,9 @@ public class Listings extends JFrame {
 	public static Date getCOut(){
 		return 	Date.valueOf(txtCheckOutDate.getText());
 	}
+	
+	public static double getPrice() {
+		return 0; 
+	}
 
 }

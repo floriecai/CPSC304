@@ -147,4 +147,8 @@ public class UserLogin extends JFrame {
 		});
 		contentPane.add(login, "4, 8, fill, top");
 	}
+	
+	public String getUserEmail() {
+		return userEmail; 
+	}
 }
