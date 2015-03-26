@@ -161,10 +161,10 @@ public class Index extends JFrame {
 				ColumnSpec.decode("68px:grow"),
 				ColumnSpec.decode("200px"),
 				ColumnSpec.decode("202px"),},
-				new RowSpec[] {
+			new RowSpec[] {
 				RowSpec.decode("128px"),
 				FormFactory.PARAGRAPH_GAP_ROWSPEC,
-				RowSpec.decode("19px"),
+				RowSpec.decode("22px"),
 				RowSpec.decode("46px"),
 				RowSpec.decode("27px"),
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -250,6 +250,13 @@ public class Index extends JFrame {
 		userField = new JTextField();
 		userField.setColumns(10);
 		panel.add(userField, "7, 3, fill, fill");
+		
+		JLabel lblNotRegisteredYet = new JLabel("Not registered yet?");
+		lblNotRegisteredYet.setFont(new Font("Tahoma", Font.BOLD, 12));
+		panel.add(lblNotRegisteredYet, "2, 4, left, default");
+		
+		JButton btnSignUp = new JButton("Sign up");
+		panel.add(btnSignUp, "3, 4, 2, 1, left, default");
 
 		JLabel lblPassword = new JLabel("Password");
 		panel.add(lblPassword, "6, 4, right, default");
