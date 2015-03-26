@@ -72,7 +72,7 @@ public class Listings extends JFrame {
 					frame.setVisible(true);
 					conn = Connecting.getConnection();
 
-					listing = new Listing(conn); 
+				
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -127,9 +127,9 @@ public class Listings extends JFrame {
 
 				for(int i = 0; i < checkBoxes.length; i++){
 					if(checkBoxes[i].isSelected()){
-						amenities[i] = 'y';
+						amenities[i] = 'T';
 					} else
-						amenities[i] = 'n';
+						amenities[i] = 'F';
 				}
 
 				int rowCount = 0;
@@ -140,34 +140,37 @@ public class Listings extends JFrame {
 				 */
 
 				int capacity = comboBox.getSelectedIndex() + 1;
-				ResultSet rs = listing.showAllListings(city, capacity, amenities, cdIn, cdOut, sortBox.getSelectedItem().toString());
+				String sortby = sortBox.getSelectedItem().toString();
+				listing = new Listing(conn); 
+				ResultSet rs = listing.showAllListings(city, capacity, amenities, cdIn, cdOut, sortby);
 
-				try {
-					rs.last();
-					rowCount = rs.getRow();
-					data = new String[rowCount][c.length];
-					listId = new String[rowCount];
-					rs.beforeFirst();
+				if (rs != null) {
+					try {
+						rs.last();
+						rowCount = rs.getRow();
+						data = new String[rowCount][c.length];
+						listId = new String[rowCount];
+						rs.beforeFirst();
 
-					while(rs.next()){
-						listId[rs.getRow()-1] = rs.getString("listingId");
-						data[rs.getRow()-1][0] = rs.getString("userName");
-						data[rs.getRow()-1][1] = String.valueOf(rs.getInt("Capacity"));
-						data[rs.getRow()-1][2] = String.valueOf(rs.getDouble("Rating"));
-						data[rs.getRow()-1][3] = rs.getString("Address");
-						data[rs.getRow()-1][4] = String.valueOf(rs.getDouble("Price"));	 
-					}		
+						while(rs.next()){
+							listId[rs.getRow()-1] = rs.getString("listingId");
+							data[rs.getRow()-1][0] = rs.getString("userName");
+							data[rs.getRow()-1][1] = String.valueOf(rs.getInt("Capacity"));
+							data[rs.getRow()-1][2] = String.valueOf(rs.getDouble("Rating"));
+							data[rs.getRow()-1][3] = rs.getString("Address");
+							data[rs.getRow()-1][4] = String.valueOf(rs.getDouble("Price"));	 
+						}		
 
-					searchTableModel = new DefaultTableModel (data,c);
-					localTable = new JTable(searchTableModel);
-					table.setRowSelectionAllowed(true);
-					table.setCellSelectionEnabled(false);
-					scrollPane.setViewportView(localTable);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+						searchTableModel = new DefaultTableModel (data,c);
+						localTable = new JTable(searchTableModel);
+						table.setRowSelectionAllowed(true);
+						table.setCellSelectionEnabled(false);
+						scrollPane.setViewportView(localTable);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
-
 			}
 
 		});
@@ -180,7 +183,7 @@ public class Listings extends JFrame {
 			}
 		});
 		txtCheckInDate.setText("Check In: YYYY MM DD");
-		txtCheckInDate.setColumns(20);
+		txtCheckInDate.setColumns(10);
 
 		txtCheckOutDate = new JTextField();
 		txtCheckOutDate.addMouseListener(new MouseAdapter() {
@@ -190,7 +193,7 @@ public class Listings extends JFrame {
 			}
 		});
 		txtCheckOutDate.setText("Check Out: YYYY MM DD");
-		txtCheckOutDate.setColumns(20);
+		txtCheckOutDate.setColumns(10);
 
 
 		comboBox.setBackground(Color.WHITE);

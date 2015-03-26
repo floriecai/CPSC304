@@ -10,7 +10,6 @@ import java.awt.Color;
 
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
-
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
@@ -21,11 +20,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import cs304project.Admin_Queries;
 import cs304project.Connecting;
+
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
+
 import java.awt.Font;
 
 public class Admin extends JFrame {
@@ -35,10 +37,11 @@ public class Admin extends JFrame {
 	private JLabel lblUser;
 	private Connection conn;
 	private AdminBoard adb;
-	private String adminId, adminName;
+	private String adminId, adminPassword;
 	private static String aName;
 	private JTextField userName;
 
+	private static Admin_Queries admin; 
 	/**
 	 * Launch the application.
 	 */
@@ -71,7 +74,7 @@ public class Admin extends JFrame {
 				ColumnSpec.decode("10px"),
 				ColumnSpec.decode("max(43dlu;default):grow"),
 				ColumnSpec.decode("126px"),},
-			new RowSpec[] {
+				new RowSpec[] {
 				RowSpec.decode("69px"),
 				RowSpec.decode("14px"),
 				FormFactory.DEFAULT_ROWSPEC,
@@ -80,31 +83,31 @@ public class Admin extends JFrame {
 				RowSpec.decode("20px"),
 				RowSpec.decode("44px"),
 				RowSpec.decode("23px"),}));
-		
+
 		JLabel lblNewLabel = new JLabel("New label");
 		lblNewLabel.setIcon(new ImageIcon(Admin.class.getResource("/cs304project/bg_small.png")));
 		contentPane.add(lblNewLabel, "1, 1, 5, 1");
-		
+
 		JLabel lblAdministratorLogin = new JLabel("Administrator Login");
 		lblAdministratorLogin.setFont(new Font("Myriad Hebrew", Font.BOLD, 16));
 		contentPane.add(lblAdministratorLogin, "1, 3, 5, 1, center, top");
-		
+
 		lblUser = new JLabel("Admin ID");
 		contentPane.add(lblUser, "2, 5, left, center");
-		
+
 		userField = new JTextField();
 		userField.setColumns(10);
 		contentPane.add(userField, "4, 5, left, center");
-		
+
 		JLabel lblAdminName = new JLabel("Admin Name");
 		contentPane.add(lblAdminName, "2, 6");
-		
+
 		userName = new JTextField();
 		userName.setColumns(10);
 		contentPane.add(userName, "4, 6, fill, default");
-		
+
 		JButton login = new JButton("Login");
-		
+
 		/*
 		 * Admin login 
 		 */
@@ -113,32 +116,36 @@ public class Admin extends JFrame {
 				Statement stmt;
 				if(userField.getText() != null && userName.getText() != null){
 					adminId = userField.getText().trim();
-					adminName = userName.getText().trim();
+					adminPassword = userName.getText().trim();
 				}
-				try {
-					conn = Connecting.getConnection();
-					stmt = conn.createStatement();
-					conn.createStatement();
-					String query = "SELECT * FROM admin WHERE adminId LIKE '%"  + adminId + "%' AND name LIKE '%" + adminName + "%'" ;
-					System.out.println(query);
-					ResultSet rs = stmt.executeQuery(query);
-					while(rs.next()){
-						String test = rs.getString("adminId");
-						if(test.contains(adminId)){
-			    		   aName = rs.getString("name");
-							adb = new AdminBoard();
-							adb.setVisible(true);
-			    		   break;
+
+				conn = Connecting.getConnection(); 
+				admin = new Admin_Queries(conn); 
+
+				ResultSet rs = admin.findAdminLogin(adminId, adminPassword);
+
+				if (rs != null) {
+					try {
+						while(rs.next()){
+							String test = rs.getString("adminId");
+							if(test.contains(adminId)){
+								aName = rs.getString("name");
+								adb = new AdminBoard();
+								adb.setVisible(true);
+								System.out.println("Successful login");
+								break;
+							}
 						}
-			    	}
-				} catch (SQLException e) {
-					e.printStackTrace();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
+				else System.out.println("NO ADMIN MATCHES");
 			}
 		});
 		contentPane.add(login, "2, 8, 3, 1, fill, top");
 	}
-	
 	public static String getAdminName(){
 		return aName;
 	}
