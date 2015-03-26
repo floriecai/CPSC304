@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import cs304project.client.ui.AdminBoard;
@@ -140,5 +141,84 @@ public class Admin_Queries {
 			e.printStackTrace();
 		} 
 		return rs;
+	}
+
+	//Admin helper to look at all users ever registered
+	public List<String> findUsers() {
+		ResultSet rs = null;
+		String users = "SELECT * FROM RegisteredUser";
+		List<String> usersTuples = new ArrayList<String>();
+
+		try {
+			PreparedStatement ps= conn.prepareStatement(users);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				String userName = rs.getString("name");
+				String email = rs.getString("email");
+				String tuple = userName + "," + email;
+				usersTuples.add(tuple);
+			}
+			ps.close();
+			return usersTuples;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		// TODO Auto-generated method stub
+		return usersTuples;
+	}
+	
+	// Admin helper to get all listings ever made
+	public List<String> findListings() {
+		ResultSet rs = null;
+		String listings = "SELECT * FROM ListingPostedIsIn LP, Location L WHERE L.postalCode = LP.postalCode";
+		List<String> listingTuples = new ArrayList<String>();
+
+		try {
+			PreparedStatement ps= conn.prepareStatement(listings);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				String postalCode = rs.getString("postalCode").trim();
+				String price = rs.getString("price");
+				String city = rs.getString("city");
+				String rating = rs.getString("rating");
+				String tuple = city + "," + postalCode + "," + price + "," + rating;
+				listingTuples.add(tuple);
+			}
+			ps.close();
+			return listingTuples;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		return listingTuples;
+	}
+	
+	
+	//Admin transaction query helper
+	public List<String> findTransactions() {
+		ResultSet rs = null;
+		String listings = "SELECT T.transactionId, T.price, T.time, L.city, LP.address FROM Transaction T, ListingPostedIsIn LP, Location L where LP.listingId = T.listingId AND L.postalCode = LP.postalCode";
+		List<String> transactionTuples = new ArrayList<String>();
+
+		try {
+			PreparedStatement ps= conn.prepareStatement(listings);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				String transactionId = rs.getString("transactionId");
+				String price = rs.getString("price");
+				String city = rs.getString("city");
+				String time = rs.getString("time");
+				String address = rs.getString("address");
+				String tuple = transactionId + "," + address + "," + city + "," + time + "," + price;
+				transactionTuples.add(tuple);
+			}
+			ps.close();
+			return transactionTuples;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		return transactionTuples;
 	}
 }

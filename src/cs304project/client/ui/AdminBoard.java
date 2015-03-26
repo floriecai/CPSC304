@@ -16,9 +16,13 @@ import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JLabel;
+
+import cs304project.Admin_Queries;
 
 public class AdminBoard extends JFrame {
 
@@ -26,6 +30,8 @@ public class AdminBoard extends JFrame {
 	private String aName;
 	private Index index;
 	private static AdminBoard frame;
+	private static Admin_Queries admin; 
+
 
 	/**
 	 * Launch the application.
@@ -57,6 +63,17 @@ public class AdminBoard extends JFrame {
 		aName = Admin.getAdminName();
 		JLabel lblNewLabel = new JLabel("Welcome " + aName);
 		JButton btnViewUsers = new JButton("Users");
+		btnViewUsers.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				admin = new Admin_Queries();
+				
+				List<String> userList = new ArrayList<String>();
+				userList = admin.findUsers();
+				for (String s : userList) {
+					System.out.println(s);
+				}
+			}
+		});
 		
 		JButton btnNewButton = new JButton("Transactions");
 		btnNewButton.addActionListener(new ActionListener() {
@@ -73,7 +90,17 @@ public class AdminBoard extends JFrame {
 		});
 		
 		JButton btnListings = new JButton("Listings");
-		
+		btnListings.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				admin = new Admin_Queries();
+				
+				List<String> listingList = new ArrayList<String>();
+				listingList = admin.findListings();
+				for (String s : listingList) {
+					System.out.println(s);
+				}
+			}
+		});
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
