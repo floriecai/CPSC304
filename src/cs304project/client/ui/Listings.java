@@ -55,7 +55,7 @@ public class Listings extends JFrame {
 	private String data[][];
 	private Listings list;
 	private JRadioButton[] selecting;
-	private static String[] listId;
+	private static int listId;
 	private UserLogin userLogin;
 	DefaultTableModel searchTableModel;
 
@@ -141,36 +141,13 @@ public class Listings extends JFrame {
 
 				int capacity = comboBox.getSelectedIndex() + 1;
 				String sortby = sortBox.getSelectedItem().toString();
-				listing = new Listing(conn); 
-				ResultSet rs = listing.showAllListings(city, capacity, amenities, cdIn, cdOut, sortby);
-
-				if (rs != null) {
-					try {
-						rs.last();
-						rowCount = rs.getRow();
-						data = new String[rowCount][c.length];
-						listId = new String[rowCount];
-						rs.beforeFirst();
-
-						while(rs.next()){
-							listId[rs.getRow()-1] = rs.getString("listingId");
-							data[rs.getRow()-1][0] = rs.getString("userName");
-							data[rs.getRow()-1][1] = String.valueOf(rs.getInt("Capacity"));
-							data[rs.getRow()-1][2] = String.valueOf(rs.getDouble("Rating"));
-							data[rs.getRow()-1][3] = rs.getString("Address");
-							data[rs.getRow()-1][4] = String.valueOf(rs.getDouble("Price"));	 
-						}		
-
+				listing = new Listing(conn);
+				data = listing.showAllListings(city, capacity, amenities, cdIn, cdOut, sortby);
 						searchTableModel = new DefaultTableModel (data,c);
 						localTable = new JTable(searchTableModel);
 						table.setRowSelectionAllowed(true);
 						table.setCellSelectionEnabled(false);
 						scrollPane.setViewportView(localTable);
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				}
 			}
 
 		});
@@ -323,8 +300,8 @@ public class Listings extends JFrame {
 		contentPane.setLayout(gl_contentPane);
 	}
 
-	public static String getSelectedId(){
-		return listId[localTable.getSelectedRow()];
+	public static int getSelectedId(){
+		return listing.listId(localTable.getSelectedRow());
 	}
 
 	public static Date getCIn(){

@@ -8,6 +8,8 @@ import java.sql.Statement;
 
 public class Listing extends Transactions{
 
+	private int[] listId;
+
 	public Listing(Connection conn) {
 		super(conn); 
 	}
@@ -16,7 +18,7 @@ public class Listing extends Transactions{
 		ResultSet rs = null;
 		Statement stmt; 
 
-		String query = "SELECT loc.city, loc.country, AVG(list.rating), AVG(list.price) "
+		String query = "SELECT loc.city, loc.country, AVG(list.rating), AVG(list.price) as avp "
 				+ "from Location loc, ListingPostedIsIn list "
 				+ "where list.postalCode = loc.postalCode "
 				+ "group by loc.city, loc.country";
@@ -28,7 +30,6 @@ public class Listing extends Transactions{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return rs; 
 	}
 	
@@ -84,10 +85,12 @@ public class Listing extends Transactions{
 	}
 
 	// Given a city, find all listings in that fit the criteria
-	public ResultSet showAllListings(String city, int capacity, char[] amenities, String cdIn, String cdOut, String sortBy) {
-		PreparedStatement ps; 
+	public String[][] showAllListings(String city, int capacity, char[] amenities, String cdIn, String cdOut, String sortBy) {
+		PreparedStatement ps;
 		ResultSet rs = null; 
-
+		String data[][] = null;
+		
+		String c[] = {"Host", "Capacity", "Rating", "Address", "Price"};
 		try {
 			String selectAll = "SELECT DISTINCT * FROM ListingPostedIsIn l, AmenitiesIncluded a, Host h, RegisteredUser r WHERE "
 					+ "h.governmentId = l.governmentId AND "
@@ -102,19 +105,37 @@ public class Listing extends Transactions{
 					+ "(SELECT DISTINCT l.listingId FROM MakesReservation m WHERE l.listingId = m.listingId "
 					+ "AND (m.checkindate <= TO_DATE('" + cdIn + "', 'YYYY-MM-DD') AND"
 					+ " m.checkoutdate >= TO_DATE('" +  cdOut + "','YYYY-MM-DD'))) " 
-					+ "ORDER BY l" + sortBy;
-
-			ps = conn.prepareStatement(selectAll);
-			ps.setString(1, city);
-
+					+ "ORDER BY " + sortBy;
+			System.out.println(selectAll);
+			ps = conn.prepareStatement(selectAll, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
 			rs = ps.executeQuery();
+			rs.last();
+			int rowCount = rs.getRow();
+			System.out.println(rowCount);
+			data = new String[rowCount][c.length];
+			listId = new int[rowCount];
+			rs.beforeFirst();
 
-			ps.close();
+			while(rs.next()){
+				listId[rs.getRow()-1] = rs.getInt("listingId");
+				data[rs.getRow()-1][0] = rs.getString("name");
+				data[rs.getRow()-1][1] = String.valueOf(rs.getInt("Capacity"));
+				data[rs.getRow()-1][2] = String.valueOf(rs.getDouble("Rating"));
+				data[rs.getRow()-1][3] = rs.getString("Address");
+				data[rs.getRow()-1][4] = String.valueOf(rs.getDouble("Price"));	 
+				System.out.println(rs.getString("name"));
+			}		
 
 		} catch (SQLException e) {
 
 		}
-		return rs;
+		return data;
+	}
+	
+	public int listId(int selection){
+		return listId[selection];
+		
 	}
 
 	// Find cheapest listing's address, city, and postalcode and the price 

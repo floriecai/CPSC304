@@ -42,6 +42,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Label;
@@ -93,14 +94,18 @@ public class Index extends JFrame {
 		setBackground(Color.WHITE);
 		setResizable(false);
 
-		String cc[] = new String[4];
+		String cc[] = new String[3];
+		float pp[] = new float[3];
 		JLabel cityImage0 = new JLabel("test");
 		JLabel cityImage1 = new JLabel("test");
 		JLabel cityImage2 = new JLabel("test");
 		JLabel cc0 = new JLabel("city - country");
 		JLabel cc1 = new JLabel("city - country 2");
 		JLabel cc2 = new JLabel("city - country 3");
-
+		JLabel price0 = new JLabel("Price");
+		JLabel price1 = new JLabel("Price");
+		JLabel price2 = new JLabel("Price");
+		
 		/*
 		 * Query!!!
 		 * Return the top 3 locations with best rating and the avg price of their listings - Need to change the query to get price and avg rating
@@ -111,18 +116,22 @@ public class Index extends JFrame {
 			public void windowOpened(WindowEvent arg0) {
 				int count = 0;
 				conn = Connecting.getConnection();
-
+				DecimalFormat df = new DecimalFormat("##.##");
 				top3 = new Listing(conn);
 				try {
 					ResultSet rs = top3.topThree();
 					while(rs.next() && count < 3 ){
 						cc[count] = rs.getString("city").trim() + "-" + rs.getString("country").trim();
+						pp[count] = rs.getFloat("avp");
 						count++;
 					}
 					cc0.setText(cc[0]);
 					cc1.setText(cc[1]);
 					cc2.setText(cc[2]);
-
+					price0.setText("$" + df.format(pp[0]) + " per day");
+					price1.setText("$" + df.format(pp[1])+ " per day");
+					price2.setText("$" + df.format(pp[2])+ " per day");
+					
 					cityImage0.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc0.getText().substring(0, cc0.getText().indexOf("-")) + ".jpg")));
 					cityImage1.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc1.getText().substring(0, cc1.getText().indexOf("-")) + ".jpg")));
 					cityImage2.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc2.getText().substring(0, cc2.getText().indexOf("-")) + ".jpg")));
@@ -220,7 +229,7 @@ public class Index extends JFrame {
 					rs.beforeFirst();
 
 					while(rs.next()){
-						data[rs.getRow()-1][0] = rs.getString("userName");
+						data[rs.getRow()-1][0] = rs.getString("name");
 						data[rs.getRow()-1][1] = String.valueOf(rs.getInt("Capacity"));
 						data[rs.getRow()-1][2] = String.valueOf(rs.getDouble("Rating"));
 						data[rs.getRow()-1][3] = rs.getString("Address");
@@ -351,16 +360,16 @@ public class Index extends JFrame {
 		cc2.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel.add(cc2, "7, 11, fill, top");
 
-		JLabel price0 = new JLabel("Price");
+
 		price0.setPreferredSize(new Dimension(200, 15));
 		price0.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(price0, "2, 13, right, top");
 
-		JLabel price1 = new JLabel("Price");
+
 		price1.setHorizontalTextPosition(SwingConstants.CENTER);
 		price1.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(price1, "4, 13, fill, top");
-		JLabel price2 = new JLabel("Price");
+
 		price2.setHorizontalTextPosition(SwingConstants.CENTER);
 		price2.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(price2, "7, 13, fill, top");

@@ -36,8 +36,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 
 import javax.swing.ButtonGroup;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
@@ -94,8 +96,9 @@ public class MakeReservation extends JFrame {
 		 * Query!
 		 * Check the selected place by its listingId and returns all the info related with it (all listing, location, host)
 		 */
+		DecimalFormat df = new DecimalFormat("##.##");
 		String query = "select distinct * from ListingPostedIsIn l, Host h, RegisteredUser r, Location loc where l.governmentId = h.governmentId "
-				+ "and l.postalCode = loc.postalCode and h.email = r.email and l.listingId = " + list.getSelectedId().trim();
+				+ "and l.postalCode = loc.postalCode and h.email = r.email and l.listingId = " + list.getSelectedId();
 		System.out.println(query);
 		try {
 			conn = Connecting.getConnection();
@@ -104,11 +107,11 @@ public class MakeReservation extends JFrame {
 			ResultSet rs = ps.executeQuery();
 			long days = (Listings.getCOut().getTime() - Listings.getCIn().getTime())/(1000*60*60*24) ;
 			if(rs.next()){
-				hostName = new JLabel(rs.getString("userName"));
+				hostName = new JLabel(rs.getString("name"));
 				city = new JLabel(rs.getString("city"));
 				address = new JLabel(rs.getString("address"));
 				double totalPrice = days * rs.getDouble("price");
-				total = new JLabel (String.valueOf(totalPrice));
+				total = new JLabel (df.format(totalPrice));
 				price = new JLabel(String.valueOf(rs.getDouble("price")));
 				guestNum = new String[rs.getInt("capacity")];
 				for(int i = 0; i < guestNum.length; i++){
@@ -245,7 +248,7 @@ public class MakeReservation extends JFrame {
 		contentPane.add(ppRb, "6, 9");
 		buttonGroup.add(ppRb);
 		
-		contentPane.add(cardInfo, "2, 10, 7, 10, fill, top");
+		contentPane.add(cardInfo, "2, 10, 8, 10, fill, top");
 		cardInfo.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("81px"),
@@ -262,7 +265,7 @@ public class MakeReservation extends JFrame {
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 				ColumnSpec.decode("81px"),
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				ColumnSpec.decode("45px"),},
+				ColumnSpec.decode("112px"),},
 			new RowSpec[] {
 				FormFactory.LINE_GAP_ROWSPEC,
 				RowSpec.decode("9px"),
@@ -276,40 +279,38 @@ public class MakeReservation extends JFrame {
 				FormFactory.DEFAULT_ROWSPEC,}));
 		
 		JLabel lblCardCompany = new JLabel("Card Company");
-		cardInfo.add(lblCardCompany, "2, 4, center, center");
+		cardInfo.add(lblCardCompany, "2, 4, 4, 1, center, center");
 		lblCardCompany.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		JRadioButton rdbtnMastercard = new JRadioButton("MasterCard");
-		cardInfo.add(rdbtnMastercard, "4, 4, 6, 1, left, top");
+		cardInfo.add(rdbtnMastercard, "6, 4, 4, 1, left, top");
 		buttonGroup_1.add(rdbtnMastercard);
 		
 		JRadioButton rdbtnVisa = new JRadioButton("Visa");
-		cardInfo.add(rdbtnVisa, "11, 4, 4, 1, left, top");
+		cardInfo.add(rdbtnVisa, "14, 4, left, top");
 		buttonGroup_1.add(rdbtnVisa);
 		
-		JLabel lblCardNumber = new JLabel("Card Number");
-		cardInfo.add(lblCardNumber, "2, 6, center, center");
-		lblCardNumber.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCardNumber.setVisible(false);
+		JLabel lblNewLabel_3 = new JLabel("Card Number");
+		cardInfo.add(lblNewLabel_3, "2, 6, 4, 1, center, default");
 		
 		cNum = new JTextField();
-		cardInfo.add(cNum, "5, 6, 10, 1, fill, top");
+		cardInfo.add(cNum, "6, 6, 9, 1, fill, top");
 		cNum.setColumns(10);
 		
 		JLabel lblCardHolderName = new JLabel("Card Holder Name");
-		cardInfo.add(lblCardHolderName, "2, 8, 3, 1, center, default");
+		cardInfo.add(lblCardHolderName, "2, 8, 4, 1, center, default");
 		lblCardHolderName.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		cName = new JTextField();
-		cardInfo.add(cName, "5, 8, 10, 1");
+		cardInfo.add(cName, "6, 8, 9, 1");
 		cName.setColumns(10);
 		
 		JLabel lblExpiryDate = new JLabel("Expiry Date");
-		cardInfo.add(lblExpiryDate, "2, 10, center, default");
+		cardInfo.add(lblExpiryDate, "2, 10, 4, 1, center, default");
 		lblExpiryDate.setHorizontalAlignment(SwingConstants.RIGHT);
 		
 		cDate = new JTextField();
-		cardInfo.add(cDate, "5, 10, 6, 1");
+		cardInfo.add(cDate, "6, 10, 9, 1");
 		cDate.setColumns(10);
 		
 		JLabel lblAdress = new JLabel("Adress");
