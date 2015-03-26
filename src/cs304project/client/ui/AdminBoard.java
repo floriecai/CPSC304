@@ -253,6 +253,18 @@ public class AdminBoard extends JFrame {
 		panelTransactions.add(btnNewButton_2);
 		
 		JButton btnNewButton_3 = new JButton("Group by date");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				admin = new Admin_Queries();
+				String c[] = {"Date", "Total amount"};
+				listing = new Listing(conn);
+				String[][] transactionList;
+				transactionList = admin.findTransactionsByDate();
+				searchTableModel = new DefaultTableModel (transactionList,c);
+				localTable = new JTable(searchTableModel);
+				scrollPane.setViewportView(localTable);
+			}
+		});
 		panelTransactions.add(btnNewButton_3);
 		contentPane.add(btnViewUsers, "4, 4, left, top");
 		contentPane.add(btnNewButton, "6, 4, 2, 1, left, top");

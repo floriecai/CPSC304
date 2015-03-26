@@ -307,7 +307,8 @@ public class Admin_Queries {
 	}
 	public String[][] findTransactionsToday() {
 		ResultSet rs = null;
-		String listings = "SELECT T.transactionId, T.price, T.time, L.city, LP.address FROM Transaction T, ListingPostedIsIn LP, Location L where LP.listingId = T.listingId AND L.postalCode = LP.postalCode";
+		String listings = "SELECT T.transactionId, T.price, T.time, L.city, LP.address FROM Transaction T, ListingPostedIsIn LP, Location L "
+				+ "where LP.listingId = T.listingId AND L.postalCode = LP.postalCode AND T.time = TRUNC(SYSDATE)";
 		String[][] transactionTuples = null;
 
 		try {
@@ -322,7 +323,7 @@ public class Admin_Queries {
 			
 			while(rs.next()){
 				transactionTuples[rs.getRow()-1][0] = rs.getString("transactionId");
-				transactionTuples[rs.getRow()-1][1] = rs.getString("price");
+				transactionTuples[rs.getRow()-1][1] = String.valueOf(rs.getFloat("price"));
 				transactionTuples[rs.getRow()-1][2] = rs.getString("city");
 				transactionTuples[rs.getRow()-1][3] = rs.getString("time");
 				transactionTuples[rs.getRow()-1][4] = rs.getString("address");
@@ -337,7 +338,7 @@ public class Admin_Queries {
 	
 	public String[][] findTransactionsByDate() {
 		ResultSet rs = null;
-		String listings = "SELECT T.transactionId, T.price, T.time, L.city, LP.address FROM Transaction T, ListingPostedIsIn LP, Location L where LP.listingId = T.listingId AND L.postalCode = LP.postalCode";
+		String listings = "SELECT sum(T.price) as total, T.time FROM Transaction T, ListingPostedIsIn LP, Location L where LP.listingId = T.listingId AND L.postalCode = LP.postalCode group by time";
 		String[][] transactionTuples = null;
 
 		try {
@@ -347,15 +348,12 @@ public class Admin_Queries {
 			
 			rs.last();
 			int rowCount = rs.getRow();
-			transactionTuples = new String[rowCount][5];
+			transactionTuples = new String[rowCount][2];
 			rs.beforeFirst();
 			
 			while(rs.next()){
-				transactionTuples[rs.getRow()-1][0] = rs.getString("transactionId");
-				transactionTuples[rs.getRow()-1][1] = rs.getString("price");
-				transactionTuples[rs.getRow()-1][2] = rs.getString("city");
-				transactionTuples[rs.getRow()-1][3] = rs.getString("time");
-				transactionTuples[rs.getRow()-1][4] = rs.getString("address");
+				transactionTuples[rs.getRow()-1][0] = rs.getString("time");
+				transactionTuples[rs.getRow()-1][1] = "$" + String.valueOf(rs.getFloat("total"));
 			}
 			ps.close();
 			
@@ -364,4 +362,5 @@ public class Admin_Queries {
 		} 
 		return transactionTuples;
 	}
+	
 }
