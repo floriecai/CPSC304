@@ -63,10 +63,8 @@ CREATE TABLE Transaction(transactionId CHAR(10),
 	price REAL, 
 	day DATE, 
 	listingId CHAR(10) NOT NULL,
-	reservationId CHAR(10) NOT NULL,
 	PRIMARY KEY (transactionId),
 	FOREIGN KEY (listingId) REFERENCES ListingPostedIsIn ON DELETE SET DEFAULT ON UPDATE CASCADE,
-	FOREIGN KEY (reservationId) REFERENCES MakesReservation ON DELETE SET DEFAULT ON UPDATE CASCADE,
 	CHECK (price >= 0.00)); 
 
 CREATE TABLE MakesReservation (reservationId CHAR(10), 
@@ -87,11 +85,9 @@ CREATE TABLE ListingIdAndEmail (listingId CHAR(10), email VARCHAR (40) NOT NULL,
 
 CREATE TABLE FulfillsReservation(reservationId CHAR (10), 
 	email VARCHAR (40) NOT NULL, 
-	reviewId CHAR(10),
 	PRIMARY KEY (reservationId),
 	FOREIGN KEY (reservationId) REFERENCES MakesReservation ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (email) REFERENCES RegisteredUser ON DELETE SET DEFAULT ON UPDATE CASCADE,
-	FOREIGN KEY (reviewId) REFERENCES WrittenReview ON DELETE CASCADE ON UPDATE CASCADE);
+	FOREIGN KEY (email) REFERENCES RegisteredUser ON DELETE SET DEFAULT ON UPDATE CASCADE);
 
 CREATE TABLE WrittenReview(reviewId CHAR(10), 
 	ratingStars INTEGER, 
