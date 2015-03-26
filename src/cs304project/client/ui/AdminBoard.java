@@ -94,10 +94,13 @@ public class AdminBoard extends JFrame {
 		JButton btnViewUsers = new JButton("Users");
 		JScrollPane scrollPane = new JScrollPane();
 		JPanel panelUser = new JPanel();
+		JPanel panelTransactions = new JPanel();
+		panelTransactions.setVisible(false);
 		panelUser.setVisible(false);
 		
 		btnViewUsers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				
 				admin = new Admin_Queries();
 				String c[] = {"User Name", "User Email"};
 				String[][] userList;
@@ -106,6 +109,7 @@ public class AdminBoard extends JFrame {
 				localTable = new JTable(searchTableModel);
 				scrollPane.setViewportView(localTable);
 				panelUser.setVisible(true);
+				panelTransactions.setVisible(false);
 			}
 		});
 		
@@ -113,6 +117,7 @@ public class AdminBoard extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				panelUser.setVisible(false);
+				panelTransactions.setVisible(true);
 				admin = new Admin_Queries();
 				String c[] = {"Transaction ID", "Price", "City", "Time", "Address"};
 				listing = new Listing(conn);
@@ -211,7 +216,7 @@ public class AdminBoard extends JFrame {
 		panelUser.add(btnNewButton_1, "2, 6, 3, 1");
 		contentPane.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.UNRELATED_GAP_COLSPEC,
-				ColumnSpec.decode("138px"),
+				ColumnSpec.decode("138px:grow"),
 				ColumnSpec.decode("16px"),
 				ColumnSpec.decode("90px"),
 				ColumnSpec.decode("167px"),
@@ -221,13 +226,34 @@ public class AdminBoard extends JFrame {
 			new RowSpec[] {
 				FormFactory.LINE_GAP_ROWSPEC,
 				RowSpec.decode("14px"),
-				RowSpec.decode("22px"),
+				RowSpec.decode("22px:grow"),
 				RowSpec.decode("28px"),
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("347px"),
 				FormFactory.UNRELATED_GAP_ROWSPEC,
 				RowSpec.decode("23px"),}));
 		contentPane.add(lblNewLabel, "8, 2, center, top");
+		
+	
+		contentPane.add(panelTransactions, "2, 6, fill, fill");
+		
+		JButton btnNewButton_2 = new JButton("Check today");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				admin = new Admin_Queries();
+				String c[] = {"Transaction ID", "Price", "City", "Time", "Address"};
+				listing = new Listing(conn);
+				String[][] transactionList;
+				transactionList = admin.findTransactionsToday();
+				searchTableModel = new DefaultTableModel (transactionList,c);
+				localTable = new JTable(searchTableModel);
+				scrollPane.setViewportView(localTable);
+			}
+		});
+		panelTransactions.add(btnNewButton_2);
+		
+		JButton btnNewButton_3 = new JButton("Group by date");
+		panelTransactions.add(btnNewButton_3);
 		contentPane.add(btnViewUsers, "4, 4, left, top");
 		contentPane.add(btnNewButton, "6, 4, 2, 1, left, top");
 		contentPane.add(btnListings, "8, 4, right, top");

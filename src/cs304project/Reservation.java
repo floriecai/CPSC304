@@ -19,7 +19,7 @@ public class Reservation extends Transactions{
 
 	public int generateTransaction(double price, int listingId) {
 		PreparedStatement ps;
-		String trans = "INSERT into Transaction (price, time, listingId) VALUES (?, ?, ?)";
+		String trans = "INSERT into Transaction (price, time, listingId, email) VALUES (?, ?, ?)";
 		int key = -1; //DEFAULT
 		try {
 			key = Statement.RETURN_GENERATED_KEYS;
@@ -42,21 +42,22 @@ public class Reservation extends Transactions{
 	}
 
 	public String generateReservation(int transId, int listingId, Date checkIn,
-			Date checkOut) {
+			Date checkOut, int numGuests) {
 		PreparedStatement ps;
-		String res = "INSERT INTO MakesReservation (transactionId, listingId "
-				+ "checkindate, checkoutdate) "
-				+ "VALUES (?,?,?,?)";
+		String res = "INSERT INTO MakesReservation (listingId "
+				+ "checkindate, checkoutdate, numberOfGuests, transactionId) "
+				+ "VALUES (?,?,?,?,?)";
 
 		try {
 			ps = conn.prepareStatement(res, Statement.RETURN_GENERATED_KEYS);
 			int resId = Statement.RETURN_GENERATED_KEYS;
 
-			ps.setInt(1, transId);
-			ps.setInt(2, listingId);
-			ps.setDate(3, checkIn);
-			ps.setDate(4, checkOut);
-
+			ps.setInt(1, listingId);
+			ps.setDate(2, checkIn);
+			ps.setDate(3, checkOut);
+			ps.setInt(4, numGuests);
+			ps.setInt(5, transId);
+			
 			ps.executeUpdate(); 
 			ps.close(); 
 
@@ -89,6 +90,23 @@ public class Reservation extends Transactions{
 		}
 	}
 
+	public void insertTransIdAndEmail(int transId, String email) {
+		String toInsert = "INSERT INTO TransactionIdAndEmail (transactionId, email) VALUES (?,?)";
+		PreparedStatement ps; 
+	
+		try {
+			ps = conn.prepareStatement(toInsert); 
+			
+			ps.setInt(1, transId); 
+			ps.setString(2, email);
+			
+			ps.executeUpdate();
+			ps.close(); 
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
 	// TODO WHAT IS GOING ON WITH THE SCHEMA??? 
 	public List<String> reservationsOfUser(String email) {
 		String reservations = "SELECT "

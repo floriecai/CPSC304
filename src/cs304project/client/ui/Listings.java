@@ -309,5 +309,4 @@ public class Listings extends JFrame {
 	public static double getPrice() {
 		return 0; 
 	}
-
 }

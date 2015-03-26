@@ -11,6 +11,7 @@ public class Connecting {
       try {
     	  DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
     	  connection = DriverManager.getConnection(connectURL,"ora_p4x9a", "a56384143");
+
     	  System.out.println("\nConnected to Oracle!");
     	  return true;
       }catch (SQLException ex){

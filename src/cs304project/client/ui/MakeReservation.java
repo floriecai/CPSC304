@@ -125,6 +125,7 @@ public class MakeReservation extends JFrame {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 469);
 		contentPane = new JPanel();
@@ -340,16 +341,18 @@ public class MakeReservation extends JFrame {
 				 * STEP 1: ADD TO TRANSACTION 
 				 * STEP 2: ADD TO APPROPRIATE PAYMENT METHOD
 				 * STEP 3: ADD TO MAKESRESERVATION
+				 * STEP 4: ADD TO TRANSACTIONID&EMAIL TABLE
 				 */
-
 				conn = Connecting.getConnection();
 				Reservation reservation = new Reservation(conn);
 
 				UserLogin userLogin = new UserLogin(); 
 
+				// STEP 1
 				int transId = reservation.generateTransaction(list.getPrice(), list.getSelectedId());
 
 				// Either add to creditcard or paypal tables
+				// STEP 2
 				if (cc) {
 					String company;
 					if (rdbtnMastercard.isSelected()) {
@@ -366,8 +369,12 @@ public class MakeReservation extends JFrame {
 					reservation.paypalTransaction(transId, userLogin.getUserEmail()); 
 				}
 
-				String res = reservation.generateReservation(transId, list.getSelectedId(), list.getCIn(), list.getCOut());
+				// STEP 3
+				String res = reservation.generateReservation(transId, list.getSelectedId(), list.getCIn(), list.getCOut(), comboBox.getSelectedIndex() + 1);
 
+				// STEP 4
+				reservation.insertTransIdAndEmail(transId, userLogin.getUserEmail());
+				
 				if (!res.equals("")) {
 					//TODO Add a box to pop up indicating successful reservation. 
 					System.out.println(res);

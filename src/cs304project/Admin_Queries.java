@@ -14,7 +14,9 @@ public class Admin_Queries {
 	private static Connection conn; 
 	private static int admin;
 	
-	public Admin_Queries() {}
+	public Admin_Queries() {
+		//super(conn); 
+	}
 	
 	public ResultSet allRegisteredUsers() {
 		String all = "SELECT * FROM RegisteredUsers";
@@ -303,4 +305,64 @@ public class Admin_Queries {
 	public int getAdminId(){
 		return admin;
 	}
+	public String[][] findTransactionsToday() {
+		ResultSet rs = null;
+		String listings = "SELECT T.transactionId, T.price, T.time, L.city, LP.address FROM Transaction T, ListingPostedIsIn LP, Location L where LP.listingId = T.listingId AND L.postalCode = LP.postalCode";
+		String[][] transactionTuples = null;
+
+		try {
+			PreparedStatement ps= conn.prepareStatement(listings, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+			rs = ps.executeQuery();
+			
+			rs.last();
+			int rowCount = rs.getRow();
+			transactionTuples = new String[rowCount][5];
+			rs.beforeFirst();
+			
+			while(rs.next()){
+				transactionTuples[rs.getRow()-1][0] = rs.getString("transactionId");
+				transactionTuples[rs.getRow()-1][1] = rs.getString("price");
+				transactionTuples[rs.getRow()-1][2] = rs.getString("city");
+				transactionTuples[rs.getRow()-1][3] = rs.getString("time");
+				transactionTuples[rs.getRow()-1][4] = rs.getString("address");
+			}
+			ps.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		return transactionTuples;
+	}
+	
+	public String[][] findTransactionsByDate() {
+		ResultSet rs = null;
+		String listings = "SELECT T.transactionId, T.price, T.time, L.city, LP.address FROM Transaction T, ListingPostedIsIn LP, Location L where LP.listingId = T.listingId AND L.postalCode = LP.postalCode";
+		String[][] transactionTuples = null;
+
+		try {
+			PreparedStatement ps= conn.prepareStatement(listings, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+			rs = ps.executeQuery();
+			
+			rs.last();
+			int rowCount = rs.getRow();
+			transactionTuples = new String[rowCount][5];
+			rs.beforeFirst();
+			
+			while(rs.next()){
+				transactionTuples[rs.getRow()-1][0] = rs.getString("transactionId");
+				transactionTuples[rs.getRow()-1][1] = rs.getString("price");
+				transactionTuples[rs.getRow()-1][2] = rs.getString("city");
+				transactionTuples[rs.getRow()-1][3] = rs.getString("time");
+				transactionTuples[rs.getRow()-1][4] = rs.getString("address");
+			}
+			ps.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		return transactionTuples;
+	}
+	
 }
