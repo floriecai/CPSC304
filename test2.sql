@@ -19,9 +19,11 @@ foreign key (email) references RegisteredUser);
 
 create table ListingPostedIsIn (listingId CHAR(10), price REAL, capacity INTEGER, private CHAR(1), rating REAL, governmentId CHAR (30) NOT NULL, postalCode CHAR(10) NOT NULL, address CHAR(40), primary key (listingId), FOREIGN KEY (governmentId) REFERENCES Host, FOREIGN KEY(postalCode) REFERENCES Location);
 
-create table AmenitiesIncluded (listingId CHAR(10), tv CHAR(1), kitchen CHAR(1), internet CHAR(10), laundry CHAR(1), toiletries CHAR(1), primary key(listingId), foreign key(listingId) references ListingPostedIsIn);
+create table AmenitiesIncluded (listingId CHAR(10), amenityId CHAR(5), tv CHAR(1), kitchen CHAR(1), internet CHAR(10), laundry CHAR(1), toiletries CHAR(1), primary key(listingId,amenityId), foreign key(listingId) references ListingPostedIsIn);
 
-create table MakesReservation (reservationId CHAR(10), listingId CHAR(10) NOT NULL, status CHAR(10), checkindate DATE NOT NULL, checkoutdate DATE NOT NULL,  numberOfGuests INTEGER, PRIMARY KEY (reservationId), FOREIGN KEY (listingId) REFERENCES ListingPostedIsIn);
+create table MakesReservation (reservationId CHAR(10), email CHAR(30) NOT NULL, listingId CHAR(10) NOT NULL, status CHAR(10), 
+  checkindate DATE NOT NULL, checkoutdate DATE NOT NULL,  numberOfGuests INTEGER, PRIMARY KEY (reservationId), FOREIGN KEY (listingId) REFERENCES ListingPostedIsIn, 
+  FOREIGN KEY (email) REFERENCES RegisteredUser);
 
 CREATE TABLE Transaction(transactionId INTEGER, price REAL, time DATE, reservationId CHAR(10) NOT NULL, PRIMARY KEY (transactionId),  UNIQUE (reservationId), FOREIGN KEY (reservationId) REFERENCES MakesReservation);
 
