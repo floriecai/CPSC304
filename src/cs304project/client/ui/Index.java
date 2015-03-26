@@ -257,10 +257,18 @@ public class Index extends JFrame {
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 * Registered user login - not full implemented yet
 			 */
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent arg0){
 				String userId = null;
+				String userPassword = null;
 				if(userField.getText() != null){
 					userId = userField.getText().trim();
+				} else {
+					return;
+				}
+				if(textField.getText() != null){
+					userPassword = textField.getText().trim();
+				} else {
+					return;
 				}
 				try {
 					stmt = conn.createStatement();
@@ -268,24 +276,21 @@ public class Index extends JFrame {
 					/*
 					 * Query!! It's not corre
 					 */
-					String query = "SELECT * FROM RegisteredUser WHERE email LIKE '%"  + userEmail + "%' AND password LIKE '%" + userPassword.toString() + "%'" ;
+					String query = "SELECT * FROM RegisteredUser WHERE email LIKE '%"  + userId + "%' AND password LIKE '%" + userPassword + "%'" ;
 					System.out.println(query);
 					PreparedStatement ps = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
 							ResultSet.CONCUR_UPDATABLE);
 					ResultSet rs = ps.executeQuery();
-					while(rs.next()){
-						String test = rs.getString("email");
-						if(rs.next()){
-							userName = rs.getString("name");
-						}
+					String email = null;
+					if(rs.next()){
+						email = rs.getString("email");
+						userName = rs.getString("name");
 						usb = new UserBoard();
 						usb.setVisible(true);
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-				UserBoard ub = new UserBoard();
-				ub.setVisible(true);
 			}
 		});
 		panel.add(logIn, "7, 5, right, top");
