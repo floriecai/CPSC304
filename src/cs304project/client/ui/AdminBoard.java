@@ -143,9 +143,29 @@ public class AdminBoard extends JFrame {
 		avgTransactions.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				admin = new Admin_Queries();
-				String avg = admin.findAvgTransactionsToday();
+				String avg = admin.findAvgTransactionsEachDay();
 				
 				JOptionPane.showMessageDialog(null, avg);
+
+				JButton maxOfAvg = new JButton("Maximum avg price of daily transaction");
+				maxOfAvg.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						admin = new Admin_Queries();
+						String max = admin.findMinOrMaxAvgTransaction("max");
+						
+						JOptionPane.showMessageDialog(null, max); 
+					};
+				});
+				
+				JButton minOfAvg = new JButton("Minimum avg price of daily transaction");
+				minOfAvg.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						admin = new Admin_Queries();
+						String min = admin.findMinOrMaxAvgTransaction("min");
+						
+						JOptionPane.showMessageDialog(null, min); 
+					}
+				});
 			}
 		});
 		

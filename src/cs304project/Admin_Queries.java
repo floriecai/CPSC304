@@ -336,8 +336,38 @@ public class Admin_Queries {
 		return transactionTuples;
 	}
 	
+	public String findMinOrMaxAvgTransaction(String agg) {
+		PreparedStatement ps;
+		String result = ""; 
+		String avg = "CREATE VIEW avg_transactions AS "
+				+ "SELECT T.time, avg(T.price) as average "
+				+ "FROM Transaction " 
+				+ "GROUP BY T.time";
+		try {
+			ps = conn.prepareStatement(avg);
+			ps.executeUpdate();
+			
+			String aggregation = "SELECT AT.time as time, " + agg + " (AT.average) "
+					+ "FROM avg_transactions AT";
+			
+			ps = conn.prepareStatement(aggregation);
+			ResultSet rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				result = rs.getString("time");
+				result = result + ": ";
+				result += rs.getString("average");
+				System.out.println(result);
+				return result;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 	
-	public String findAvgTransactionsToday() {
+	public String findAvgTransactionsEachDay() {
 		String s = "CREATE VIEW daily_transactions AS "
 				+ " SELECT T.time, SUM(price) as sum "
 				+ "FROM Transaction T " 
