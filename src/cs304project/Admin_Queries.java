@@ -63,7 +63,6 @@ public class Admin_Queries {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 		return usersVerified;
 	}
 	
@@ -419,6 +418,25 @@ public class Admin_Queries {
 			e.printStackTrace();
 		} 
 		return transactionTuples;
+	}
+	
+	public boolean upRate(int listingId, double rate) {
+		String instList = "UPDATE ListingPostedIsIn "
+				+ "SET rating = ?"
+				+ "WHERE listingId = ?";
+		try {
+			PreparedStatement ps= conn.prepareStatement(instList, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+			ps.setDouble(1, rate);
+			ps.setInt(2, listingId);
+			
+			ps.executeUpdate();
+			ps.close();
+		return true;
+		}catch (SQLException e) {
+			e.printStackTrace();
+		return false;
+		}
 	}
 	
 }

@@ -13,6 +13,8 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import java.sql.Connection;
+import java.sql.Date;
+import java.util.Calendar;
 
 import javax.swing.JScrollPane;
 
@@ -32,6 +34,7 @@ import java.awt.SystemColor;
 import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JTextPane;
 
 public class UserBoard extends JFrame {
 
@@ -83,7 +86,7 @@ public class UserBoard extends JFrame {
 		JPanel updatePanel = new JPanel();
 		contentPane.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.DEFAULT_COLSPEC,
-				ColumnSpec.decode("132px"),
+				ColumnSpec.decode("132px:grow"),
 				ColumnSpec.decode("29px"),
 				ColumnSpec.decode("138px"),
 				ColumnSpec.decode("73px"),
@@ -95,7 +98,7 @@ public class UserBoard extends JFrame {
 				RowSpec.decode("14px"),
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.PARAGRAPH_GAP_ROWSPEC,
-				RowSpec.decode("14px"),
+				RowSpec.decode("14px:grow"),
 				FormFactory.PARAGRAPH_GAP_ROWSPEC,
 				RowSpec.decode("23px:grow"),
 				FormFactory.PARAGRAPH_GAP_ROWSPEC,
@@ -113,7 +116,6 @@ public class UserBoard extends JFrame {
 		contentPane.add(lblNewLabel_1, "6, 3, 2, 1, right, top");
 		JLabel amount = new JLabel(String.valueOf(uq.amount(email)));
 		contentPane.add(amount, "8, 3, center, top");
-
 		insertPanel.setVisible(false);
 		sidePanel.setVisible(false);
 		updatePanel.setVisible(false);
@@ -124,7 +126,7 @@ public class UserBoard extends JFrame {
 				insertPanel.setVisible(false);
 				updatePanel.setVisible(false);
 				uq = new UserQueries();
-				String c[] = {"Listing ID", "Price", "Capacity", "Rating", "Address", "Postal Code"};
+				String c[] = {"Transaction", "Price", "Time"};
 				String[][] userList;
 				userList = uq.usersTransactions(email);
 				searchTableModel = new DefaultTableModel (userList,c);
@@ -153,8 +155,6 @@ public class UserBoard extends JFrame {
 		btnLogout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				setVisible(false);
-				Index index = new Index();
-				index.setVisible(true);
 			}
 		});
 		contentPane.add(btnLogout, "8, 7");
@@ -227,9 +227,6 @@ public class UserBoard extends JFrame {
 		JCheckBox chckbxToiletries_1 = new JCheckBox("Toiletries");
 		updatePanel.add(chckbxToiletries_1, "6, 14");
 		
-		
-		
-	
 		contentPane.add(insertPanel, "4, 9,5,1 fill, fill");
 		insertPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,

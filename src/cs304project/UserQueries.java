@@ -40,7 +40,7 @@ public class UserQueries {
 	public String[][] usersTransactions(String email) {
 		PreparedStatement ps;
 		conn = Connecting.getConnection();
-		String transactions = "select t.transactionId, t.price, t.time "
+		String transactions = "select *"
 		+ "from transaction t, makesreservation mr, transactionidandemail te "
 		+ "where t.transactionid = te.transactionId and "
 		+ "t.transactionid = mr.transactionid and "
@@ -57,7 +57,7 @@ public class UserQueries {
 			rs.beforeFirst();
 			while (rs.next()) {
 				transactionTuples[rs.getRow() - 1][0] = rs.getString("transactionId");
-				transactionTuples[rs.getRow() - 1][1] = rs.getString("price");
+				transactionTuples[rs.getRow() - 1][1] = "$" + rs.getString("price");
 				transactionTuples[rs.getRow() - 1][2] = rs.getString("time");
 			}
 			ps.close();
