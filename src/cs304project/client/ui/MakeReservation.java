@@ -62,6 +62,9 @@ public class MakeReservation extends JFrame {
 	private boolean cc;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private final ButtonGroup buttonGroup_1 = new ButtonGroup();
+	
+	private static String email; 
+	private double totalPrice; 
 
 
 
@@ -72,7 +75,7 @@ public class MakeReservation extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MakeReservation frame = new MakeReservation();
+					MakeReservation frame = new MakeReservation(email);
 					frame.setVisible(true);
 
 				} catch (Exception e) {
@@ -85,7 +88,7 @@ public class MakeReservation extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MakeReservation() {
+	public MakeReservation(String given) {
 		JPanel cardInfo = new JPanel();
 		cardInfo.setVisible(false);
 		setResizable(false);
@@ -113,7 +116,7 @@ public class MakeReservation extends JFrame {
 				hostName = new JLabel(rs.getString("name"));
 				city = new JLabel(rs.getString("city"));
 				address = new JLabel(rs.getString("address"));
-				double totalPrice = days * rs.getDouble("price");
+				totalPrice = days * rs.getDouble("price");
 				total = new JLabel (df.format(totalPrice));
 				price = new JLabel(String.valueOf(rs.getDouble("price")));
 				guestNum = new String[rs.getInt("capacity")];
@@ -122,7 +125,6 @@ public class MakeReservation extends JFrame {
 				}
 			}	
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -333,7 +335,9 @@ public class MakeReservation extends JFrame {
 		contentPane.add(total, "14, 13, 2, 1, default, top");
 
 		JButton btnCofirm = new JButton("Confirm");
+		this.email = given;
 		btnCofirm.addActionListener(new ActionListener() {
+			@SuppressWarnings("static-access")
 			public void actionPerformed(ActionEvent arg0) {
 				/*
 				 * Insert the reservation and transaction to their tables
@@ -345,12 +349,10 @@ public class MakeReservation extends JFrame {
 				 */
 				conn = Connecting.getConnection();
 				Reservation reservation = new Reservation(conn);
-
-				UserLogin userLogin = new UserLogin(); 
-
+				String s = given; 
 				// STEP 1
-				int transId = reservation.generateTransaction(list.getPrice(), list.getSelectedId());
-
+				int transId = reservation.generateTransaction(totalPrice, list.getSelectedId());
+				System.out.println(transId);
 				// Either add to creditcard or paypal tables
 				// STEP 2
 				if (cc) {
@@ -361,22 +363,27 @@ public class MakeReservation extends JFrame {
 						company = "Visa";
 					}
 
-					String date = cDate.getText(); 
+					String date = cDate.getText();
+					System.out.println(cDate);
+					System.out.println(company);
+					System.out.println(cName.getText());
 
-					if (date != null) 
-						reservation.creditCardInfo(cNum.getText(), company, cName.getText(), Date.valueOf(date));
+					if (date != null)
+						Date.valueOf(date); 
+						reservation.creditCardInfo(cNum.getText(), company, cName.getText(), date);
 				} else { 
-					reservation.paypalTransaction(transId, userLogin.getUserEmail()); 
+					reservation.paypalTransaction(transId, given); 
 				}
 
 				// STEP 3
 				String res = reservation.generateReservation(transId, list.getSelectedId(), list.getCIn(), list.getCOut(), comboBox.getSelectedIndex() + 1);
 
 				// STEP 4
-				reservation.insertTransIdAndEmail(transId, userLogin.getUserEmail());
+				reservation.insertTransIdAndEmail(transId, given);
 				
 				if (!res.equals("")) {
-					//TODO Add a box to pop up indicating successful reservation. 
+					Index index = new Index(); 
+					index.setVisible(true); 
 					System.out.println(res);
 				} else {
 					//TODO Indicate failure to make reservation

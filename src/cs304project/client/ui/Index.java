@@ -132,6 +132,7 @@ public class Index extends JFrame {
 					price1.setText("$" + df.format(pp[1])+ " per day");
 					price2.setText("$" + df.format(pp[2])+ " per day");
 					
+					System.out.println(cc0.getText());
 					cityImage0.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc0.getText().substring(0, cc0.getText().indexOf("-")) + ".jpg")));
 					cityImage1.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc1.getText().substring(0, cc1.getText().indexOf("-")) + ".jpg")));
 					cityImage2.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc2.getText().substring(0, cc2.getText().indexOf("-")) + ".jpg")));

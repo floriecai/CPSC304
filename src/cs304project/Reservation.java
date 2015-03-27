@@ -19,38 +19,54 @@ public class Reservation extends Transactions{
 
 	public int generateTransaction(double price, int listingId) {
 		PreparedStatement ps;
-		String trans = "INSERT into Transaction (price, time, listingId, email) VALUES (?, ?, ?)";
+
+		String trans = "INSERT INTO Transaction (transactionId, price, time, listingId) VALUES (trans_seq.nextval, ?, ?, ?)";
 		int key = -1; //DEFAULT
 		try {
-			key = Statement.RETURN_GENERATED_KEYS;
-			ps = conn.prepareStatement(trans, key);
-			ps.setDouble(1, price);
-
-			java.util.Date date = new java.util.Date(); 
-			long t = date.getTime();
-			java.sql.Date now = new java.sql.Date(t);
-			ps.setTimestamp(2, new Timestamp(now.getTime())); 
-			ps.setInt(3, listingId);
 			
-			ps.executeUpdate();
-			ps.close();
+			conn = Connecting.getConnection(); 
+			
+			if (conn != null) {
+				ps = conn.prepareStatement(trans);
+				ps.setDouble(1, price);
+
+				java.util.Date date = new java.util.Date(); 
+				long t = date.getTime();
+				java.sql.Date now = new java.sql.Date(t);
+				ps.setTimestamp(2, new Timestamp(now.getTime())); 
+				ps.setInt(3, listingId);
+
+				String s = "SELECT MAX(transactionId) as transactionId FROM Transaction";
+				Statement statement = conn.createStatement(); 
+				
+				ResultSet rs = statement.executeQuery(s); 
+				
+				if (rs.next()) 
+					key = rs.getInt("transactionId"); 
+			
+				ps.executeUpdate();
+
+				statement.close(); 
+				ps.close();
+			}
+			else System.out.println("conn is null wtf");
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println(key);
 		return key;
 	}
 
 	public String generateReservation(int transId, int listingId, Date checkIn,
 			Date checkOut, int numGuests) {
 		PreparedStatement ps;
-		String res = "INSERT INTO MakesReservation (listingId "
+		String res = "INSERT INTO MakesReservation (reservationId, listingId, "
 				+ "checkindate, checkoutdate, numberOfGuests, transactionId) "
-				+ "VALUES (?,?,?,?,?)";
+				+ "VALUES (resv_seq.nextval, ?,?,?,?,?)";
 
 		try {
-			ps = conn.prepareStatement(res, Statement.RETURN_GENERATED_KEYS);
-			int resId = Statement.RETURN_GENERATED_KEYS;
+			ps = conn.prepareStatement(res);
 
 			ps.setInt(1, listingId);
 			ps.setDate(2, checkIn);
@@ -59,13 +75,14 @@ public class Reservation extends Transactions{
 			ps.setInt(5, transId);
 			
 			ps.executeUpdate(); 
-			ps.close(); 
+			ps.close();
+						
+			return "Sucessful reservation!";
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		return "Successfully created reservation!";
+		return "";
 	}
 
 	public void deleteReservation(int transId, int listingId, Date checkin, Date checkout) {
@@ -98,12 +115,11 @@ public class Reservation extends Transactions{
 			ps = conn.prepareStatement(toInsert); 
 			
 			ps.setInt(1, transId); 
-			ps.setString(2, email);
+			ps.setString(2, "floriecai@hotmail.com");
 			
 			ps.executeUpdate();
 			ps.close(); 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 	}
@@ -121,10 +137,17 @@ public class Reservation extends Transactions{
 	public void paypalTransaction(int transId, String email) {
 		String paypal = "INSERT INTO PayPalTransaction (transactionId, email) VALUES (?, ?)";
 		PreparedStatement ps; 
+		
+		conn = Connecting.getConnection(); 
+		
 		try {
 			ps = conn.prepareStatement(paypal);
 			ps.setInt(1, transId);
 			ps.setString(2, email); 
+			
+			
+			System.out.println(transId);
+			System.out.println(email);
 			ps.executeUpdate();
 			
 			ps.close();
@@ -133,9 +156,11 @@ public class Reservation extends Transactions{
 		} 
 	}
 	
-	public void creditCardInfo(String cardNo, String company, String name, Date expiry) {
-		String ccInfo = "INSERT INTO CreditCardInfo (cardNumber, company, cardHolderName, expiryDate) "
+	public void creditCardInfo(String cardNo, String company, String name, String expiry) {
+		String ccInfo = "INSERT INTO CreditCardInfo (cardNumber, company, cardHolderName, expirationDate) "
 				+ "VALUES (?, ?, ?, ?)";
+		System.out.println(cardNo + " " + company + " " + name + " " + expiry);
+		conn = Connecting.getConnection(); 
 		
 		PreparedStatement ps; 
 		try {
@@ -143,7 +168,7 @@ public class Reservation extends Transactions{
 			ps.setString(1, cardNo); 
 			ps.setString(2, company); 
 			ps.setString(3, name);
-			ps.setDate(4, expiry);
+			ps.setString(4, expiry);
 			
 			ps.executeUpdate();
 			ps.close(); 
