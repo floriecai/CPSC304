@@ -39,8 +39,8 @@ CREATE TABLE AmenitiesIncluded (listingId CHAR(10), amenityId CHAR(5),tv CHAR(1)
 laundry CHAR(1),toiletries CHAR(1),PRIMARY KEY(listingId, amenityId),
 FOREIGN KEY(listingId) REFERENCES ListingPostedIsIn ON DELETE CASCADE); 
 
-CREATE TABLE Transaction(transactionId CHAR(10), price REAL, day DATE, listingId CHAR(10) NOT NULL, PRIMARY KEY (transactionId),
-FOREIGN KEY (listingId) REFERENCES ListingPostedIsIn ON DELETE SET DEFAULT, CHECK (price >= 0.00)); 
+CREATE TABLE Transaction(transactionId CHAR(10), price REAL, day DATE, listingId CHAR(10), PRIMARY KEY (transactionId),
+FOREIGN KEY (listingId) REFERENCES ListingPostedIsIn ON DELETE SET NULL, CHECK (price >= 0.00)); 
 
 CREATE TABLE MakesReservation (reservationId CHAR(10), listingId CHAR(10) NOT NULL, status CHAR(10), checkindate DATE NOT NULL,
 checkoutdate DATE NOT NULL, numberOfGuests INTEGER, transactionId CHAR(10) NOT NULL, PRIMARY KEY (reservationId), 
@@ -53,7 +53,7 @@ FOREIGN KEY (email) REFERENCES RegisteredUser ON DELETE CASCADE);
 
 CREATE TABLE FulfillsReservation(reservationId CHAR (10), email VARCHAR (40) NOT NULL, PRIMARY KEY (reservationId),
 FOREIGN KEY (reservationId) REFERENCES MakesReservation ON DELETE CASCADE,
-FOREIGN KEY (email) REFERENCES RegisteredUser ON DELETE SET DEFAULT);
+FOREIGN KEY (email) REFERENCES RegisteredUser ON DELETE CASCADE);
 
 CREATE TABLE WrittenReview(reviewId CHAR(10), ratingStars INTEGER, description VARCHAR (4000), day DATE, 
 reservationId CHAR(10) NOT NULL,PRIMARY KEY (reviewId), UNIQUE (reservationId), 
@@ -69,7 +69,7 @@ FOREIGN KEY (transactionId) REFERENCES Transaction ON DELETE CASCADE);
 
 CREATE TABLE PayPalTransaction(email VARCHAR(40), transactionId CHAR(10),
 PRIMARY KEY (transactionId), FOREIGN KEY (transactionId) REFERENCES Transaction ON DELETE CASCADE,
-FOREIGN KEY (email) REFERENCES RegisteredUser ON DELETE SET DEFAULT);
+FOREIGN KEY (email) REFERENCES RegisteredUser ON DELETE SET NULL);
 
 CREATE TABLE Refund (transactionId CHAR(10), cancellationfee REAL, time DATE,
 PRIMARY KEY(transactionId), FOREIGN KEY (transactionId) REFERENCES Transaction ON DELETE CASCADE,
