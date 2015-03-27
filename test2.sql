@@ -54,3 +54,4 @@ insert into AmenitiesIncluded values ('4', 'n', 'n', 'Cable', 'y', 'n');
 insert into MakesReservation values ('1', '2', 'OK', TO_DATE('2010/01/01', 'yyyy/mm/dd'), TO_DATE('2010/03/03', 'yyyy/mm/dd'), 2);
 
 insert into Transaction values (1, 180.0, CURRENT_DATE, '1');
+
