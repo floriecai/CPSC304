@@ -20,7 +20,7 @@ CREATE TABLE Admin(adminId INTEGER, name VARCHAR(40), password VARCHAR (40), PRI
 CREATE TABLE RegisteredUser (email VARCHAR (40), name VARCHAR (40), password VARCHAR(40),PRIMARY KEY (email));
 
 CREATE TABLE Host (governmentId VARCHAR (30), email VARCHAR (40), phoneNumber CHAR(10), name VARCHAR(40),
-PRIMARY KEY (governmentId), UNIQUE (email), FOREIGN KEY (email) REFERENCES RegisteredUser 
+PRIMARY KEY (governmentId), UNIQUE (email), FOREIGN KEY (email) REFERENCES RegisteredUser(email) 
 ON DELETE CASCADE 
 ON UPDATE CASCADE);
 
