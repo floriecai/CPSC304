@@ -136,7 +136,7 @@ public class UserLogin extends JFrame {
 					ResultSet rs = ps.executeQuery();
 					if(rs.next()){
 						logged = true;
-						mk = new MakeReservation();
+						mk = new MakeReservation(userEmail);
 						mk.setVisible(true);
 					} else
 						logged = false;
@@ -149,6 +149,6 @@ public class UserLogin extends JFrame {
 	}
 	
 	public String getUserEmail() {
-		return userEmail; 
+		return userField.getText().trim();
 	}
 }
