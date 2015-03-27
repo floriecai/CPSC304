@@ -117,7 +117,7 @@ public class UserRegister extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				Statement stmt;
 				register.setEnabled(false);
-				if(userField.getText().length() > 0 && userPass.getPassword().toString().length() > 0){
+				if(userField.getText().length() > 0 && userPass.getPassword().toString().length() > 0 && name.getText().length() > 0){
 					if (!userField.getText().contains("@")) {
 						JOptionPane.showMessageDialog(null, "Please, an email.");
 						register.setEnabled(true);
@@ -125,6 +125,7 @@ public class UserRegister extends JFrame {
 					}
 					userEmail = userField.getText().trim();
 					userPassword = userPass.getText();
+					userName = name.getText().trim();
 					//setVisible(false);
 				} else {
 					JOptionPane.showMessageDialog(null, "Username or password is empty");

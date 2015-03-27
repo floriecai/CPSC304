@@ -447,6 +447,7 @@ public class UserBoard extends JFrame {
 					JOptionPane.showMessageDialog(null, "Listing updated");
 				else
 					JOptionPane.showMessageDialog(null, "Failed to update your Listing");
+				updatePanel.setVisible(false);
 			}
 		});
 		updatePanel.add(btnUpdate, "6, 16, 3, 1, center, default");
