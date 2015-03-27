@@ -6,10 +6,12 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.JTable;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import java.awt.Color;
@@ -25,6 +27,8 @@ public class UserBoard extends JFrame {
 	private JPanel contentPane;
 	private UserQueries uq;
 	private static Connection conn;
+	private static JTable localTable;
+	DefaultTableModel searchTableModel; 
 
 	/**
 	 * Launch the application.
@@ -51,58 +55,67 @@ public class UserBoard extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		System.out.println(email + name);
+
 		JButton btnLogOut = new JButton("Log out");
-		
+
 		JLabel lblNewLabel_1 = new JLabel("Total Amount");
 		uq = new UserQueries();
 		JLabel amount = new JLabel(String.valueOf(uq.amount(email)));
-		
+
 		JLabel lblWelcome = new JLabel("Welcome,");
-		
+
 		JLabel userName = new JLabel(name);
-		
+
+		JPanel panelUser = new JPanel(); 
 		JScrollPane scrollPane = new JScrollPane();
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+				gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap(453, Short.MAX_VALUE)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblNewLabel_1)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(amount)
-							.addContainerGap())
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblWelcome)
-							.addGap(28)
-							.addComponent(userName)
-							.addContainerGap())))
-				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-					.addGap(67)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE))
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap(514, Short.MAX_VALUE)
-					.addComponent(btnLogOut)
-					.addContainerGap())
-		);
+						.addContainerGap(453, Short.MAX_VALUE)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+										.addComponent(lblNewLabel_1)
+										.addPreferredGap(ComponentPlacement.UNRELATED)
+										.addComponent(amount)
+										.addContainerGap())
+										.addGroup(gl_contentPane.createSequentialGroup()
+												.addComponent(lblWelcome)
+												.addGap(28)
+												.addComponent(userName)
+												.addContainerGap())))
+												.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+														.addGap(67)
+														.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE))
+														.addGroup(gl_contentPane.createSequentialGroup()
+																.addContainerGap(514, Short.MAX_VALUE)
+																.addComponent(btnLogOut)
+																.addContainerGap())
+				);
 		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(6)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblWelcome)
-						.addComponent(userName))
-					.addPreferredGap(ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNewLabel_1)
-						.addComponent(amount))
-					.addGap(44)
-					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 256, GroupLayout.PREFERRED_SIZE)
-					.addGap(11)
-					.addComponent(btnLogOut))
-		);
+						.addGap(6)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblWelcome)
+								.addComponent(userName))
+								.addPreferredGap(ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+										.addComponent(lblNewLabel_1)
+										.addComponent(amount))
+										.addGap(44)
+										.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 256, GroupLayout.PREFERRED_SIZE)
+										.addGap(11)
+										.addComponent(btnLogOut)));
+
+		uq = new UserQueries();
+		String c[] = {"TransactionId", "Amount", "Date of Booking"};
+		String [][] transactionList;
+		transactionList = uq.usersTransactions(email);
+		searchTableModel = new DefaultTableModel (transactionList,c);
+		localTable = new JTable(searchTableModel);
+		scrollPane.setViewportView(localTable);
+
 		contentPane.setLayout(gl_contentPane);
 	}
 }
