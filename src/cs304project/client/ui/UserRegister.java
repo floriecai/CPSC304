@@ -10,6 +10,7 @@ import java.awt.Color;
 
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -119,10 +120,14 @@ public class UserRegister extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				Statement stmt;
 				register.setEnabled(false);
-				if(userField.getText() != null && userPass.getPassword() != null){
+				if(userField.getText().length() > 0 && userPass.getPassword().toString().length() > 0){
 					userEmail = userField.getText().trim();
 					userPassword = userPass.getText();
 					//setVisible(false);
+				} else {
+					JOptionPane.showMessageDialog(null, "Username or password is empty");
+					register.setEnabled(true);
+					return;
 				}
 				try {
 					conn = Connecting.getConnection();
@@ -138,6 +143,8 @@ public class UserRegister extends JFrame {
 					if(rs.next()){
 						logged = false;
 						lblUser.setForeground(Color.red);
+						JOptionPane.showMessageDialog(null, "Email Taken");
+
 						register.setEnabled(true);
 					} else {
 						String insertion = "INSERT INTO RegisteredUser VALUES ('"  + userEmail + "', '" + userEmail.substring(0, userEmail.indexOf("@")) + "', '" + userPassword + "')";

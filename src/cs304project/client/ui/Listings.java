@@ -180,12 +180,16 @@ public class Listings extends JFrame {
 		book.setHorizontalAlignment(SwingConstants.LEFT);
 		book.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println( localTable.getSelectedRow());
-				if(localTable.getSelectedRow() >= 0){
-					userLogin = new UserLogin();
-					userLogin.setVisible(true);
-				}else
-					JOptionPane.showMessageDialog(null, "Please, select one listing");
+				 if (localTable == null) {
+						JOptionPane.showMessageDialog(null, "Please, select one listing");
+				 } else {
+					System.out.println( localTable.getSelectedRow());
+					if(localTable.getSelectedRow() >= 0){
+						userLogin = new UserLogin();
+						userLogin.setVisible(true);
+					}else
+						JOptionPane.showMessageDialog(null, "Please, select one listing");
+				 }
 			}
 		});
 		txtCity.setText("City");

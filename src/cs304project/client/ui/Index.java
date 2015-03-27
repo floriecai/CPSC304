@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
@@ -185,12 +186,17 @@ public class Index extends JFrame {
 			 * in a specific city
 			 */
 			public void actionPerformed(ActionEvent e) {
+				search.setEnabled(false);
 				String c[] = {"Host", "Capacity", "Rating", "Address", "Price"};
 				String data[][] = null;
 				String city = searchField.getText();
 				int rowCount = 0;
 				conn = Connecting.getConnection();
-
+				if (searchField.getText().length() < 1 || searchField.getText().contains("Where do you want to go?")) {
+					JOptionPane.showMessageDialog(null, "Please enter a location.");
+					search.setEnabled(true);
+					return;
+				}
 				/*
 				 * Query!!!
 				 */
@@ -220,7 +226,9 @@ public class Index extends JFrame {
 				}
 				listing = new Listings(c, data);
 				listing.setVisible(true);
+				search.setEnabled(true);
 				setVisible(false);
+				search.setEnabled(true);
 			}
 		});
 		panel.add(search, "3, 3, 2, 1, left, fill");
@@ -265,16 +273,16 @@ public class Index extends JFrame {
 			public void actionPerformed(ActionEvent arg0){
 				String userId = null;
 				String userPassword = null;
-				if(userField.getText() != null){
+				logIn.setEnabled(false);
+				if(userField.getText().length() > 0 && userPass.getText().length() > 0){
 					userId = userField.getText().trim();
-				} else {
-					return;
-				}
-				if(userPass.getText() != null){
 					userPassword = userPass.getText().trim();
 				} else {
+					JOptionPane.showMessageDialog(null, "Username or password is empty");
+					logIn.setEnabled(true);
 					return;
 				}
+
 				try {
 					stmt = conn.createStatement();
 
@@ -289,9 +297,13 @@ public class Index extends JFrame {
 						userName = rs.getString("name");
 						usb = new UserBoard(email, userName);
 						usb.setVisible(true);
+					} else {
+						JOptionPane.showMessageDialog(null, "Your username or password is incorrect!");
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
+				} finally {
+					logIn.setEnabled(true);
 				}
 			}
 		});
@@ -428,16 +440,41 @@ public class Index extends JFrame {
 
 				count++;
 			}
-			cc0.setText(cc[0]);
-			cc1.setText(cc[1]);
-			cc2.setText(cc[2]);
-			price0.setText("$" + df.format(pp[0]) + " per day");
-			price1.setText("$" + df.format(pp[1])+ " per day");
-			price2.setText("$" + df.format(pp[2])+ " per day");
+			if (count < 3) {
+				cc0.setText("Not enough locations");
+				cc1.setText("Not enough locations");
+				cc2.setText("Not enough locations");
+				price0.setText("--.-- per day");
+				price1.setText("--.-- per day");
+				price2.setText("--.-- per day");
+				cityImage0.setIcon(new ImageIcon(Index.class.getResource("/cs304project/default.jpg")));
+				cityImage1.setIcon(new ImageIcon(Index.class.getResource("/cs304project/default.jpg")));
+				cityImage2.setIcon(new ImageIcon(Index.class.getResource("/cs304project/default.jpg")));
+			}
 			
-			cityImage0.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc0.getText().substring(0, cc0.getText().indexOf("-")) + ".jpg")));
-			cityImage1.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc1.getText().substring(0, cc1.getText().indexOf("-")) + ".jpg")));
-			cityImage2.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc2.getText().substring(0, cc2.getText().indexOf("-")) + ".jpg")));
+			cc0.setText(cc[0]);
+			price0.setText("$" + df.format(pp[0]) + " per day");
+			cc1.setText(cc[1]);
+			price1.setText("$" + df.format(pp[1]) + " per day");
+			cc2.setText(cc[2]);
+			price2.setText("$" + df.format(pp[2]) + " per day");
+			
+			try {
+				cityImage0.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc0.getText().substring(0, cc0.getText().indexOf("-")) + ".jpg")));
+			} catch (NullPointerException e) {
+				cityImage0.setIcon(new ImageIcon(Index.class.getResource("/cs304project/default.jpg")));
+			}
+			try {
+				cityImage1.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc1.getText().substring(0, cc1.getText().indexOf("-")) + ".jpg")));
+			} catch (NullPointerException e) {
+				cityImage1.setIcon(new ImageIcon(Index.class.getResource("/cs304project/default.jpg")));
+			}
+			try {
+				cityImage2.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc2.getText().substring(0, cc2.getText().indexOf("-")) + ".jpg")));
+			} catch (NullPointerException e) {
+				cityImage2.setIcon(new ImageIcon(Index.class.getResource("/cs304project/default.jpg")));
+			}
+
 			if (!rating) {
 				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
 						ResultSet.CONCUR_UPDATABLE);
