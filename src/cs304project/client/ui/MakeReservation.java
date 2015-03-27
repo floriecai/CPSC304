@@ -10,6 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JLabel;
@@ -385,8 +386,11 @@ public class MakeReservation extends JFrame {
 					Index index = new Index(); 
 					index.setVisible(true); 
 					System.out.println(res);
+
+						JOptionPane.showMessageDialog(null, "Your reservation was completed! Thank you!");
+
 				} else {
-					//TODO Indicate failure to make reservation
+					JOptionPane.showMessageDialog(null, "Reservation not completed!");
 				}
 			}
 		});

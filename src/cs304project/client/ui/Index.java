@@ -132,7 +132,6 @@ public class Index extends JFrame {
 					price1.setText("$" + df.format(pp[1])+ " per day");
 					price2.setText("$" + df.format(pp[2])+ " per day");
 					
-					System.out.println(cc0.getText());
 					cityImage0.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc0.getText().substring(0, cc0.getText().indexOf("-")) + ".jpg")));
 					cityImage1.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc1.getText().substring(0, cc1.getText().indexOf("-")) + ".jpg")));
 					cityImage2.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc2.getText().substring(0, cc2.getText().indexOf("-")) + ".jpg")));
@@ -258,6 +257,16 @@ public class Index extends JFrame {
 		
 		JButton btnSignUp = new JButton("Sign up");
 		panel.add(btnSignUp, "3, 4, 2, 1, left, default");
+		
+		btnSignUp.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				UserRegister registering = new UserRegister();
+				registering.setVisible(true);
+			}
+			
+		});
 
 		JLabel lblPassword = new JLabel("Password");
 		panel.add(lblPassword, "6, 4, right, default");
@@ -389,6 +398,12 @@ public class Index extends JFrame {
 				setVisible(false);
 			}
 		});
+		
+		JButton btnNewButton = new JButton("New button");
+		panel.add(btnNewButton, "2, 14");
+		
+		JButton btnNewButton_1 = new JButton("New button");
+		panel.add(btnNewButton_1, "4, 14, center, default");
 		lblStaffArea.setBackground(Color.LIGHT_GRAY);
 		lblStaffArea.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblStaffArea.setHorizontalAlignment(SwingConstants.CENTER);
