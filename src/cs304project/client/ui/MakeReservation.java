@@ -389,7 +389,7 @@ public class MakeReservation extends JFrame {
 					System.out.println(res);
 
 					JOptionPane.showMessageDialog(null, "Your reservation was completed! Thank you!");
-
+					setVisible(false);
 				} else {
 					JOptionPane.showMessageDialog(null, "Reservation not completed!");
 				}

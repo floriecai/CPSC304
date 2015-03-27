@@ -10,6 +10,7 @@ import java.awt.Color;
 
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -43,8 +44,12 @@ public class UserRegister extends JFrame {
 	private JPasswordField userPass;
 	private String userEmail;
 	private String userPassword;
+	private String userName;
 	private boolean logged;
 	private MakeReservation mk;
+	private JLabel lblUserName;
+	private JTextField name;
+	private JLabel lblPassword;
 
 
 	/**
@@ -78,7 +83,7 @@ public class UserRegister extends JFrame {
 				ColumnSpec.decode("98px"),
 				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
-				FormFactory.DEFAULT_COLSPEC,
+				ColumnSpec.decode("default:grow"),
 				ColumnSpec.decode("10px"),
 				ColumnSpec.decode("max(72dlu;default)"),
 				ColumnSpec.decode("70px"),},
@@ -98,7 +103,7 @@ public class UserRegister extends JFrame {
 		
 		JLabel lblAdministratorLogin = new JLabel("Register");
 		lblAdministratorLogin.setFont(new Font("Myriad Hebrew", Font.BOLD, 16));
-		contentPane.add(lblAdministratorLogin, "1, 3, 6, 1, center, top");
+		contentPane.add(lblAdministratorLogin, "1, 3, 7, 1, center, top");
 		
 		lblUser = new JLabel("User email");
 		contentPane.add(lblUser, "2, 5, left, center");
@@ -106,13 +111,6 @@ public class UserRegister extends JFrame {
 		userField = new JTextField();
 		userField.setColumns(10);
 		contentPane.add(userField, "4, 5, 3, 1, fill, center");
-		
-		JLabel lblAdminName = new JLabel("Password");
-		contentPane.add(lblAdminName, "2, 6");
-		
-		userPass = new JPasswordField();
-		userPass.setColumns(10);
-		contentPane.add(userPass, "4, 6, 3, 1, fill, default");
 		
 		JButton register = new JButton("Register");
 		register.addActionListener(new ActionListener() {
@@ -122,7 +120,7 @@ public class UserRegister extends JFrame {
 				if(userField.getText() != null && userPass.getPassword() != null){
 					userEmail = userField.getText().trim();
 					userPassword = userPass.getText();
-					//setVisible(false);
+					userName = name.getText();
 				}
 				try {
 					conn = Connecting.getConnection();
@@ -136,30 +134,38 @@ public class UserRegister extends JFrame {
 	                        ResultSet.CONCUR_UPDATABLE);
 					ResultSet rs = ps.executeQuery();
 					if(rs.next()){
-						logged = false;
-						lblUser.setForeground(Color.red);
-						register.setEnabled(true);
+						JOptionPane.showMessageDialog(null, "You are already registered");
+						register.setEnabled(false);
 					} else {
-						String insertion = "INSERT INTO RegisteredUser VALUES ('"  + userEmail + "', '" + userEmail.substring(0, userEmail.indexOf("@")) + "', '" + userPassword + "')";
+						String insertion = "INSERT INTO RegisteredUser VALUES ('"  + userEmail + "', '" + userName +  "', '" + userPassword + "')";
 						ps = conn.prepareStatement(insertion, ResultSet.TYPE_SCROLL_SENSITIVE,
 		                        ResultSet.CONCUR_UPDATABLE);
-						rs = ps.executeQuery();
-						System.out.println(insertion);
-						if (rs.next()) {
-							logged = true;
-							setVisible(false);
-						} else {
-							System.out.println("Insertion failed");
-							register.setEnabled(true);
+						ps.executeUpdate();
+						ps.close();
+						JOptionPane.showMessageDialog(null, "Thanks for your registration!");
+						setVisible(false);
 						}
-
-
-					}
 				} catch (SQLException e) {
 					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Registration failed!");
+					register.setEnabled(true);
 				}
 			}
 		});
+		
+		lblUserName = new JLabel("User name");
+		contentPane.add(lblUserName, "2, 6, right, default");
+		
+		name = new JTextField();
+		contentPane.add(name, "4, 6, 3, 1, fill, default");
+		name.setColumns(10);
+		
+		lblPassword = new JLabel("Password");
+		contentPane.add(lblPassword, "2, 7, right, default");
+		
+		userPass = new JPasswordField();
+		userPass.setColumns(10);
+		contentPane.add(userPass, "4, 7, 3, 1, fill, default");
 		contentPane.add(register, "4, 8, fill, top");
 	}
 	
