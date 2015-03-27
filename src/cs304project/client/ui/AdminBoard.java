@@ -134,7 +134,19 @@ public class AdminBoard extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				index = new Index();
 				index.setVisible(true);
-				setVisible(false);			}
+				setVisible(false);			
+				}
+		});
+		
+		
+		JButton avgTransactions = new JButton("Avg Price of Daily Transactions");
+		avgTransactions.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				admin = new Admin_Queries();
+				String avg = admin.findAvgTransactionsToday();
+				
+				JOptionPane.showMessageDialog(null, avg);
+			}
 		});
 		
 		JButton btnListings = new JButton("Listings");

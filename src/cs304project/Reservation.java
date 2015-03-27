@@ -115,22 +115,13 @@ public class Reservation extends Transactions{
 			ps = conn.prepareStatement(toInsert); 
 			
 			ps.setInt(1, transId); 
-			ps.setString(2, "floriecai@hotmail.com");
+			ps.setString(2, email);
 			
 			ps.executeUpdate();
 			ps.close(); 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
-	}
-	// TODO WHAT IS GOING ON WITH THE SCHEMA??? 
-	public List<String> reservationsOfUser(String email) {
-		String reservations = "SELECT "
-				+ "FROM MakesReservation ";
-		ResultSet rs = null;
-
-		PreparedStatement ps; 
-		return null;
 	}
 	
 	// Paypal transactions 

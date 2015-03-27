@@ -336,6 +336,34 @@ public class Admin_Queries {
 		return transactionTuples;
 	}
 	
+	
+	public String findAvgTransactionsToday() {
+		String s = "CREATE VIEW daily_transactions AS "
+				+ " SELECT T.time, SUM(price) as sum "
+				+ "FROM Transaction T " 
+				+ "GROUP BY T.time ";
+		try {
+			PreparedStatement ps = conn.prepareStatement(s);
+			String avg = "";
+			ps.executeUpdate(); 
+			ps.close();
+			
+			String ss = "select AVG(DT.sum) as avg"
+					+ "from daily_transactions DT";
+			ps = conn.prepareStatement(s);
+			
+			ResultSet rs = ps.executeQuery(); 
+			if (rs.next()) {
+				avg = rs.getString("avg"); 
+			}
+			return avg; 
+		
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		return "";
+	}
+	
 	public String[][] findTransactionsByDate() {
 		ResultSet rs = null;
 		String listings = "SELECT sum(T.price) as total, T.time FROM Transaction T, ListingPostedIsIn LP, Location L where LP.listingId = T.listingId AND L.postalCode = LP.postalCode group by time";

@@ -128,16 +128,24 @@ public class Listings extends JFrame {
 				/*
 				 * Query!
 				 */
-
-				int capacity = comboBox.getSelectedIndex() + 1;
-				String sortby = sortBox.getSelectedItem().toString();
-				listing = new Listing(conn);
-				data = listing.showAllListings(city, capacity, amenities, cdIn, cdOut, sortby);
-						searchTableModel = new DefaultTableModel (data,c);
-						localTable = new JTable(searchTableModel);
-						table.setRowSelectionAllowed(true);
-						table.setCellSelectionEnabled(false);
-						scrollPane.setViewportView(localTable);
+				
+				if (city.equals("") || cdIn.equals("") || cdOut.equals("")) {
+					//TODO ADD POPUP TO SAY IT NEEDS TO BE ENTERED. 
+				}
+				//else if (Date.valueOf(cdOut) > Date.valueOf(cdIn)) {
+					
+				//}
+				else {
+					int capacity = comboBox.getSelectedIndex() + 1;
+					String sortby = sortBox.getSelectedItem().toString();
+					listing = new Listing(conn);
+					data = listing.showAllListings(city, capacity, amenities, cdIn, cdOut, sortby);
+							searchTableModel = new DefaultTableModel (data,c);
+							localTable = new JTable(searchTableModel);
+							table.setRowSelectionAllowed(true);
+							table.setCellSelectionEnabled(false);
+							scrollPane.setViewportView(localTable);
+				}
 			}
 
 		});
