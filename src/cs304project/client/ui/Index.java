@@ -480,6 +480,7 @@ public class Index extends JFrame {
 						ResultSet.CONCUR_UPDATABLE);
 				String dropView = "DROP VIEW min_price CASCADE CONSTRAINTS";
 				stmt.executeQuery(dropView);
+				conn.commit();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

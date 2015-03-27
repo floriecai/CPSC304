@@ -154,6 +154,7 @@ public class UserRegister extends JFrame {
 						ps = conn.prepareStatement(insertion, ResultSet.TYPE_SCROLL_SENSITIVE,
 		                        ResultSet.CONCUR_UPDATABLE);
 						ps.executeUpdate();
+						conn.commit();
 						ps.close();
 						JOptionPane.showMessageDialog(null, "Thanks for your registration!");
 						setVisible(false);

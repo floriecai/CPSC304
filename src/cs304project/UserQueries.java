@@ -120,6 +120,7 @@ public class UserQueries {
 			ps.setString(6, postalCode);
 			ps.setString(7, address);
 			ps.executeUpdate();
+			conn.commit();
 			
 			String l = "Select listingId from ListingPostedIsIn";
 			System.out.println("Ok");
@@ -141,6 +142,7 @@ public class UserQueries {
 			ps.setString(5, laundry);
 			ps.setString(6, toiletries);
 			ps.executeUpdate();
+			conn.commit();
 			ps.close();
 			return true;
 		} catch (SQLException e) {
@@ -180,6 +182,7 @@ public class UserQueries {
 					ResultSet.CONCUR_UPDATABLE);
 			ps.setInt(1, listingId);
 			ps.executeUpdate();
+			conn.commit();
 			ps.close();
 			return true;
 		} catch (SQLException e) {
@@ -205,6 +208,7 @@ public class UserQueries {
 				ps.setString(2, city);
 				ps.setString(3, country);
 				ps.executeUpdate();
+				conn.commit();
 				ps.close();
 			return true;
 		} catch (SQLException e) {
@@ -230,6 +234,7 @@ public class UserQueries {
 			ps.setString(3, is_private);
 			ps.setInt(4, listingId);
 			ps.executeUpdate();
+			conn.commit();
 			String instAment = "UPDATE AmenitiesIncluded  "
 					+ "SET tv  = ?, kitchen = ?, internet = ?, laundry = ?, toiletries = ?"
 					+ "WHERE listingId = ?";
@@ -242,6 +247,7 @@ public class UserQueries {
 			ps.setString(5, toiletries);
 			ps.setInt(6, listingId);
 			ps.executeUpdate();
+			conn.commit();
 			ps.close();
 		return true;
 		}catch (SQLException e) {

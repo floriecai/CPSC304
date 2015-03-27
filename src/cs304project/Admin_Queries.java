@@ -133,7 +133,7 @@ public class Admin_Queries {
 				+ "WHERE NOT EXISTS "
 				+ "(SELECT H.email "
 				+ " FROM MakesReservation M, Transaction T, Host H, ListingPostedIsIn L "
-				+ "WHERE T.transactionId = M.transactionId AND "
+				+ "WHERE T.transactionId = M.transactionId OR "
 				+ "L.governmentId = H.governmentId AND "
 				+ "L.listingId = M.listingId AND "
 				+ "L.listingId = T.listingId AND "
@@ -431,6 +431,7 @@ public class Admin_Queries {
 			ps.setInt(2, listingId);
 			
 			ps.executeUpdate();
+			conn.commit();
 			ps.close();
 		return true;
 		}catch (SQLException e) {

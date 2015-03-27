@@ -129,6 +129,7 @@ public class Listing extends Transactions{
 			ps.setString(7, addr);
 
 			ps.executeUpdate();
+			conn.commit();
 			ps.close(); 
 
 			System.out.println("Listing: " + listingId + "was added!");
@@ -152,6 +153,7 @@ public class Listing extends Transactions{
 
 			if (rowCount == 0)
 				System.out.println("This listing could not be deleted because it does not exist");
+			conn.commit();
 
 			ps.close();
 
