@@ -128,16 +128,13 @@ public class Admin_Queries {
 	// inactive string = All registered users NOT IN Reservations or PostedListings 
 	public String[][] findInactiveUsers() {
 		String[][] usersInactive = null;
-		String inactive =  "SELECT R.name, R.email "
+		String inactive =  "Select R.email "
 				+ "FROM RegisteredUser R "
-				+ "WHERE NOT EXISTS "
-				+ "(SELECT H.email "
-				+ " FROM MakesReservation M, Transaction T, Host H, ListingPostedIsIn L "
-				+ "WHERE T.transactionId = M.transactionId AND "
-				+ "L.governmentId = H.governmentId AND "
-				+ "L.listingId = M.listingId AND "
-				+ "L.listingId = T.listingId AND "
-				+ "R.email = H.email)";
+				+ "MINUS "
+				+ "(Select distinct H.email "
+				+ "FROM ListingPostedIsIn L, Host H "
+				+ "WHERE l.governmentId = H.governmentId UNION "
+				+ "Select t.email from TransactionIdAndEmail t)";
 		
 		ResultSet rs = null;
 

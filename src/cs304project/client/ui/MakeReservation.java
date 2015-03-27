@@ -65,7 +65,8 @@ public class MakeReservation extends JFrame {
 	private final ButtonGroup buttonGroup_1 = new ButtonGroup();
 
 	private static String email; 
-	private double totalPrice; 
+	private double totalPrice;
+	private static Date credDate;
 
 
 
@@ -365,34 +366,52 @@ public class MakeReservation extends JFrame {
 						company = "Visa";
 					}
 
-					String date = cDate.getText();
-					System.out.println(cDate);
-					System.out.println(company);
-					System.out.println(cName.getText());
+					String date = cDate.getText() + "-01";
 
-					if (date != null)
-						Date.valueOf(date); 
-					reservation.creditCardInfo(cNum.getText(), company, cName.getText(), date);
+					if (date != null) {
+						try {
+							credDate = Date.valueOf(date); 
+							reservation.creditCardInfo(cNum.getText(), company, cName.getText(), date);
+						
+							String res = reservation.generateReservation(transId, list.getSelectedId(), list.getCIn(), list.getCOut(), comboBox.getSelectedIndex() + 1);
+
+							if (!res.equals("")) {
+								Index index = new Index(); 
+								index.setVisible(true); 
+
+								reservation.insertTransIdAndEmail(transId, given);
+
+								JOptionPane.showMessageDialog(null, "Your reservation was completed! Thank you!");
+								setVisible(false);
+							} else {
+								JOptionPane.showMessageDialog(null, "Reservation not completed!");
+							}
+
+						} catch (IllegalArgumentException e) {
+							JOptionPane.showMessageDialog(null, "Date must be YYYY-MM");
+							return;
+						}
+					}
 				} else { 
-					reservation.paypalTransaction(transId, given); 
+					reservation.paypalTransaction(transId, given);
+					String res = reservation.generateReservation(transId, list.getSelectedId(), list.getCIn(), list.getCOut(), comboBox.getSelectedIndex() + 1);
+
+					if (!res.equals("")) {
+						Index index = new Index(); 
+						index.setVisible(true); 
+
+						reservation.insertTransIdAndEmail(transId, given);
+
+						JOptionPane.showMessageDialog(null, "Your reservation was completed! Thank you!");
+						setVisible(false);
+					} else {
+						JOptionPane.showMessageDialog(null, "Reservation not completed!");
+					}
 				}
 
 				// STEP 3
-				String res = reservation.generateReservation(transId, list.getSelectedId(), list.getCIn(), list.getCOut(), comboBox.getSelectedIndex() + 1);
 
 				// STEP 4
-				reservation.insertTransIdAndEmail(transId, given);
-
-				if (!res.equals("")) {
-					Index index = new Index(); 
-					index.setVisible(true); 
-					System.out.println(res);
-
-					JOptionPane.showMessageDialog(null, "Your reservation was completed! Thank you!");
-					setVisible(false);
-				} else {
-					JOptionPane.showMessageDialog(null, "Reservation not completed!");
-				}
 
 			}
 		});
