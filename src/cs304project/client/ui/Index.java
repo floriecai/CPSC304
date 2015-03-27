@@ -401,7 +401,7 @@ public class Index extends JFrame {
 			
 		});
 		JButton cheapBtn = new JButton("Cheap location with great ratings!");
-		panel.add(cheapBtn, "4, 14, center, default");
+		panel.add(cheapBtn, "4, 14, 2, 1, center, default");
 		
 		cheapBtn.addActionListener(new ActionListener() {
 

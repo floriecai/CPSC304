@@ -58,6 +58,8 @@ public class AdminBoard extends JFrame {
 	private int adminId;
 	private static Connection conn;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private JTextField lidField;
+	private JTextField rateField;
 	
 
 
@@ -97,10 +99,21 @@ public class AdminBoard extends JFrame {
 		JPanel panelTransactions = new JPanel();
 		panelTransactions.setVisible(false);
 		panelUser.setVisible(false);
+		JButton btnUpdateRatings = new JButton("Update Ratings");
+		JPanel panelRate = new JPanel();
+		panelRate.setVisible(false);
+		
+		btnUpdateRatings.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				panelRate.setVisible(true);
+				
+			}
+		});
+		btnUpdateRatings.setVisible(false);
 		
 		btnViewUsers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+				panelRate.setVisible(false);
 				admin = new Admin_Queries();
 				String c[] = {"User Name", "User Email"};
 				String[][] userList;
@@ -118,6 +131,7 @@ public class AdminBoard extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				panelUser.setVisible(false);
 				panelTransactions.setVisible(true);
+				panelRate.setVisible(false);
 				admin = new Admin_Queries();
 				String c[] = {"Transaction ID", "Price", "City", "Time", "Address"};
 				listing = new Listing(conn);
@@ -134,13 +148,47 @@ public class AdminBoard extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				index = new Index();
 				index.setVisible(true);
-				setVisible(false);			}
+				setVisible(false);			
+				}
+		});
+		
+		
+		JButton avgTransactions = new JButton("Avg Price of Daily Transactions");
+		avgTransactions.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				admin = new Admin_Queries();
+				String avg = admin.findAvgTransactionsEachDay();
+				
+				JOptionPane.showMessageDialog(null, avg);
+
+				JButton maxOfAvg = new JButton("Maximum avg price of daily transaction");
+				maxOfAvg.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						admin = new Admin_Queries();
+						String max = admin.findMinOrMaxAvgTransaction("max");
+						
+						JOptionPane.showMessageDialog(null, max); 
+					};
+				});
+				
+				JButton minOfAvg = new JButton("Minimum avg price of daily transaction");
+				minOfAvg.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						admin = new Admin_Queries();
+						String min = admin.findMinOrMaxAvgTransaction("min");
+						
+						JOptionPane.showMessageDialog(null, min); 
+					}
+				});
+			}
 		});
 		
 		JButton btnListings = new JButton("Listings");
 		btnListings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				panelUser.setVisible(false);
+				panelTransactions.setVisible(false);
+				panelRate.setVisible(false);
 				admin = new Admin_Queries();
 				String c[] = {"Postal Code", "Price", "City", "Rating"};
 				listing = new Listing(conn);
@@ -149,6 +197,7 @@ public class AdminBoard extends JFrame {
 				searchTableModel = new DefaultTableModel (listingList,c);
 				localTable = new JTable(searchTableModel);
 				scrollPane.setViewportView(localTable);
+				btnUpdateRatings.setVisible(true);
 			}
 		});
 		panelUser.setLayout(new FormLayout(new ColumnSpec[] {
@@ -227,7 +276,7 @@ public class AdminBoard extends JFrame {
 				FormFactory.LINE_GAP_ROWSPEC,
 				RowSpec.decode("14px"),
 				RowSpec.decode("22px:grow"),
-				RowSpec.decode("28px"),
+				RowSpec.decode("28px:grow"),
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("347px"),
 				FormFactory.UNRELATED_GAP_ROWSPEC,
@@ -237,8 +286,82 @@ public class AdminBoard extends JFrame {
 		JButton btnHosts = new JButton("Hosts");
 		btnHosts.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				panelRate.setVisible(false);
+				panelTransactions.setVisible(false);
+				panelUser.setVisible(false);
+				admin = new Admin_Queries();
+				String c[] = {"Host Name", "Host Email"};
+				String[][] userList;
+				userList = admin.allVerifiedHosts();
+				searchTableModel = new DefaultTableModel (userList,c);
+				localTable = new JTable(searchTableModel);
+				scrollPane.setViewportView(localTable);
 			}
 		});
+		
+
+		contentPane.add(panelRate, "4, 6, 5, 1, fill, fill");
+		panelRate.setLayout(new FormLayout(new ColumnSpec[] {
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("max(123dlu;default)"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("default:grow"),},
+			new RowSpec[] {
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,}));
+		
+		JLabel lblListingId = new JLabel("Listing Id");
+		panelRate.add(lblListingId, "16, 4");
+		
+		lidField = new JTextField();
+		panelRate.add(lidField, "18, 4, left, default");
+		lidField.setColumns(10);
+		
+		JLabel lblNewRate = new JLabel("New rate");
+		panelRate.add(lblNewRate, "16, 6, right, default");
+		
+		rateField = new JTextField();
+		panelRate.add(rateField, "18, 6, left, default");
+		rateField.setColumns(10);
+		
+		JButton btnNewButton_4 = new JButton("Update");
+		btnNewButton_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				admin = new Admin_Queries();
+				int l = Integer.parseInt(lidField.getText());
+				double r = Double.parseDouble(rateField.getText());
+				boolean ok = admin.upRate(l, r);
+				if(ok)
+					JOptionPane.showMessageDialog(null, "Rating updated");
+				else
+					JOptionPane.showMessageDialog(null, "It was not possible to update the ratings");
+			}
+		});
+		panelRate.add(btnNewButton_4, "18, 10, center, default");
 		contentPane.add(btnHosts, "5, 4, center, top");
 		
 	
@@ -278,6 +401,9 @@ public class AdminBoard extends JFrame {
 		contentPane.add(btnListings, "8, 4, right, top");
 		contentPane.add(panelUser, "2, 6, fill, fill");
 		contentPane.add(scrollPane, "4, 6, 5, 1, fill, fill");
+		
+
+		contentPane.add(btnUpdateRatings, "7, 8");
 		contentPane.add(btnLogOut, "8, 8, right, top");
 	}
 }

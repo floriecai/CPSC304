@@ -63,7 +63,6 @@ public class Admin_Queries {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 		return usersVerified;
 	}
 	
@@ -336,6 +335,64 @@ public class Admin_Queries {
 		return transactionTuples;
 	}
 	
+	public String findMinOrMaxAvgTransaction(String agg) {
+		PreparedStatement ps;
+		String result = ""; 
+		String avg = "CREATE VIEW avg_transactions AS "
+				+ "SELECT T.time, avg(T.price) as average "
+				+ "FROM Transaction " 
+				+ "GROUP BY T.time";
+		try {
+			ps = conn.prepareStatement(avg);
+			ps.executeUpdate();
+			
+			String aggregation = "SELECT AT.time as time, " + agg + " (AT.average) "
+					+ "FROM avg_transactions AT";
+			
+			ps = conn.prepareStatement(aggregation);
+			ResultSet rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				result = rs.getString("time");
+				result = result + ": ";
+				result += rs.getString("average");
+				System.out.println(result);
+				return result;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public String findAvgTransactionsEachDay() {
+		String s = "CREATE VIEW daily_transactions AS "
+				+ " SELECT T.time, SUM(price) as sum "
+				+ "FROM Transaction T " 
+				+ "GROUP BY T.time ";
+		try {
+			PreparedStatement ps = conn.prepareStatement(s);
+			String avg = "";
+			ps.executeUpdate(); 
+			ps.close();
+			
+			String ss = "select AVG(DT.sum) as avg"
+					+ "from daily_transactions DT";
+			ps = conn.prepareStatement(s);
+			
+			ResultSet rs = ps.executeQuery(); 
+			if (rs.next()) {
+				avg = rs.getString("avg"); 
+			}
+			return avg; 
+		
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		return "";
+	}
+	
 	public String[][] findTransactionsByDate() {
 		ResultSet rs = null;
 		String listings = "SELECT sum(T.price) as total, T.time FROM Transaction T, ListingPostedIsIn LP, Location L where LP.listingId = T.listingId AND L.postalCode = LP.postalCode group by time";
@@ -361,6 +418,25 @@ public class Admin_Queries {
 			e.printStackTrace();
 		} 
 		return transactionTuples;
+	}
+	
+	public boolean upRate(int listingId, double rate) {
+		String instList = "UPDATE ListingPostedIsIn "
+				+ "SET rating = ?"
+				+ "WHERE listingId = ?";
+		try {
+			PreparedStatement ps= conn.prepareStatement(instList, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+			ps.setDouble(1, rate);
+			ps.setInt(2, listingId);
+			
+			ps.executeUpdate();
+			ps.close();
+		return true;
+		}catch (SQLException e) {
+			e.printStackTrace();
+		return false;
+		}
 	}
 	
 }
