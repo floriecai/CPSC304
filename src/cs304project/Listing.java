@@ -6,8 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+
+import cs304project.client.ui.Index;
 
 public class Listing extends Transactions{
 
@@ -34,6 +38,41 @@ public class Listing extends Transactions{
 			e.printStackTrace();
 		}
 		return rs; 
+	}
+	
+	public ResultSet valueSort() {
+		ResultSet rs = null;
+		Statement stmt; 
+		String makeView = "CREATE VIEW min_price AS " +
+				"SELECT L.city, LP.postalCode, MIN(LP.price) as min " +
+				"FROM ListingPostedIsIn LP, Location L " +
+				"WHERE LP.postalCode = L.postalCode AND LP.rating >= ALL " +
+					"(select AVG(LP2.rating) as avgRating " +
+					"from ListingPostedIsIn LP2, Location L2 " +
+					"where LP2.postalCode = L2.postalCode AND L2.city = L.city " +
+					"group by L2.city, LP2.postalCode) " +
+					"GROUP by L.city, LP.postalCode";
+		String getCheapest = "select M.city, L.country, MIN(M.min) as min " +
+							 "from min_price M, ListingPostedIsIn LP, Location L " +
+							 "where LP.postalCode = M.postalCode AND L.postalCode = LP.postalCode " +
+							 "GROUP BY M.city, L.country " +
+							 "ORDER BY min ASC";
+		
+		try {
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+			rs = stmt.executeQuery(makeView);
+			System.out.println("Created nested aggregation view");
+			rs = stmt.executeQuery(getCheapest);
+			System.out.println("Queries cheapest locations with >= AVG rating");
+			DecimalFormat df = new DecimalFormat("##.##");
+			return rs;
+
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return rs;
 	}
 	
 	// Add a listing, rating is default NULL
