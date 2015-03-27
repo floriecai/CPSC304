@@ -111,11 +111,22 @@ public class Listings extends JFrame {
 		search.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
+				Date inDate = null;
+				Date outDate = null; 
 				String c[] = {"Host", "Capacity", "Rating", "Address", "Price"};
 				String data[][] = null;
 				String city = txtCity.getText();
+				System.out.println("city text: " + city);
 				String cdIn = txtCheckInDate.getText();
+				System.out.println("checkin: " + cdIn );
 				String cdOut = txtCheckOutDate.getText();
+
+				try {
+					inDate = Date.valueOf(cdIn);
+					outDate = Date.valueOf(cdOut); 
+				} catch (IllegalArgumentException e) {
+					JOptionPane.showMessageDialog(null, "Dates must be of the format YYYY-MM-DD");
+				}
 
 				for(int i = 0; i < checkBoxes.length; i++){
 					if(checkBoxes[i].isSelected()){
@@ -128,23 +139,22 @@ public class Listings extends JFrame {
 				/*
 				 * Query!
 				 */
-				
-				if (city.equals("") || cdIn.equals("") || cdOut.equals("")) {
-					//TODO ADD POPUP TO SAY IT NEEDS TO BE ENTERED. 
-				}
-				//else if (Date.valueOf(cdOut) > Date.valueOf(cdIn)) {
-					
-				//}
+
+				if (city.equals("") || cdIn.equals("") || cdOut.equals("") || city.equals("City") || cdIn.equals("Check In: YYYY-MM-DD")
+						|| cdOut.equals("Check Out: YYYY-MM-DD"))
+					JOptionPane.showMessageDialog(null, "Please fill in all of: City, Checkin Date, and Checkout Date"); 
+				else if (inDate.after(outDate)) 
+					JOptionPane.showMessageDialog(null, "Checkout date must be after checkin date");
 				else {
 					int capacity = comboBox.getSelectedIndex() + 1;
 					String sortby = sortBox.getSelectedItem().toString();
 					listing = new Listing(conn);
 					data = listing.showAllListings(city, capacity, amenities, cdIn, cdOut, sortby);
-							searchTableModel = new DefaultTableModel (data,c);
-							localTable = new JTable(searchTableModel);
-							table.setRowSelectionAllowed(true);
-							table.setCellSelectionEnabled(false);
-							scrollPane.setViewportView(localTable);
+					searchTableModel = new DefaultTableModel (data,c);
+					localTable = new JTable(searchTableModel);
+					table.setRowSelectionAllowed(true);
+					table.setCellSelectionEnabled(false);
+					scrollPane.setViewportView(localTable);
 				}
 			}
 
@@ -307,13 +317,15 @@ public class Listings extends JFrame {
 	}
 
 	public static Date getCIn(){
+		System.out.println("Checkin: " + txtCheckInDate.getText());
 		return 	Date.valueOf(txtCheckInDate.getText());
 	}
 
 	public static Date getCOut(){
+		System.out.println("Checkout: " + txtCheckOutDate.getText());
 		return 	Date.valueOf(txtCheckOutDate.getText());
 	}
-	
+
 	public static double getPrice() {
 		return 0; 
 	}

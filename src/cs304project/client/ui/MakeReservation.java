@@ -63,7 +63,7 @@ public class MakeReservation extends JFrame {
 	private boolean cc;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private final ButtonGroup buttonGroup_1 = new ButtonGroup();
-	
+
 	private static String email; 
 	private double totalPrice; 
 
@@ -351,9 +351,10 @@ public class MakeReservation extends JFrame {
 				conn = Connecting.getConnection();
 				Reservation reservation = new Reservation(conn);
 				String s = given; 
+
 				// STEP 1
 				int transId = reservation.generateTransaction(totalPrice, list.getSelectedId());
-				System.out.println(transId);
+
 				// Either add to creditcard or paypal tables
 				// STEP 2
 				if (cc) {
@@ -371,7 +372,7 @@ public class MakeReservation extends JFrame {
 
 					if (date != null)
 						Date.valueOf(date); 
-						reservation.creditCardInfo(cNum.getText(), company, cName.getText(), date);
+					reservation.creditCardInfo(cNum.getText(), company, cName.getText(), date);
 				} else { 
 					reservation.paypalTransaction(transId, given); 
 				}
@@ -381,17 +382,18 @@ public class MakeReservation extends JFrame {
 
 				// STEP 4
 				reservation.insertTransIdAndEmail(transId, given);
-				
+
 				if (!res.equals("")) {
 					Index index = new Index(); 
 					index.setVisible(true); 
 					System.out.println(res);
 
-						JOptionPane.showMessageDialog(null, "Your reservation was completed! Thank you!");
+					JOptionPane.showMessageDialog(null, "Your reservation was completed! Thank you!");
 
 				} else {
 					JOptionPane.showMessageDialog(null, "Reservation not completed!");
 				}
+
 			}
 		});
 		btnCofirm.setFont(new Font("Tahoma", Font.BOLD, 14));
