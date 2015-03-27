@@ -336,16 +336,16 @@ public class Admin_Queries {
 		PreparedStatement ps;
 		String result = ""; 
 		String avg = "CREATE VIEW avg_transactions AS "
-				+ "SELECT T.time, avg(T.price) as average "
+				+ "SELECT time, avg(price) as avg_t "
 				+ "FROM Transaction " 
-				+ "GROUP BY T.time";
+				+ "GROUP BY time";
 		try {
+			System.out.println(avg);
 			ps = conn.prepareStatement(avg);
 			ps.executeUpdate();
 			
-			String aggregation = "SELECT AT.time as time, " + agg + " (AT.average) "
+			String aggregation = "SELECT AT.time as time, " + agg + " (AT.avg_t) "
 					+ "FROM avg_transactions AT";
-			
 			ps = conn.prepareStatement(aggregation);
 			ResultSet rs = ps.executeQuery();
 			
@@ -428,6 +428,7 @@ public class Admin_Queries {
 			ps.setInt(2, listingId);
 			
 			ps.executeUpdate();
+			conn.commit();
 			ps.close();
 		return true;
 		}catch (SQLException e) {

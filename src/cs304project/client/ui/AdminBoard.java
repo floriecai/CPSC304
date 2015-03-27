@@ -396,6 +396,45 @@ public class AdminBoard extends JFrame {
 			}
 		});
 		panelTransactions.add(btnNewButton_3);
+		
+		JButton btnMavg = new JButton("Minimum Avg");
+		btnMavg.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				admin = new Admin_Queries();
+				String c[] = {"Date", "Total amount"};
+				listing = new Listing(conn);
+				String transactionAvg;
+				transactionAvg = admin.findMinOrMaxAvgTransaction("min");
+				JOptionPane.showMessageDialog(null, transactionAvg);
+			}
+		});
+		panelTransactions.add(btnMavg);
+		
+		JButton btnMaximumAvg = new JButton("Maximum Avg");
+		btnMaximumAvg.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				admin = new Admin_Queries();
+				String c[] = {"Date", "Total amount"};
+				listing = new Listing(conn);
+				String transactionAvg;
+				transactionAvg = admin.findMinOrMaxAvgTransaction("max");
+				JOptionPane.showMessageDialog(null, transactionAvg);
+			}
+		});
+		panelTransactions.add(btnMaximumAvg);
+		
+		JButton btnAvgDay = new JButton("Average daily");
+		btnAvgDay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				admin = new Admin_Queries();
+				String c[] = {"Date", "Total amount"};
+				listing = new Listing(conn);
+				String transactionAvg;
+				transactionAvg = admin.findAvgTransactionsEachDay();
+				JOptionPane.showMessageDialog(null, transactionAvg);
+			}
+		});
+		panelTransactions.add(btnAvgDay);
 		contentPane.add(btnViewUsers, "4, 4, left, top");
 		contentPane.add(btnNewButton, "6, 4, 2, 1, center, top");
 		contentPane.add(btnListings, "8, 4, right, top");

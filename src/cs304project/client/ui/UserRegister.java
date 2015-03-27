@@ -50,6 +50,7 @@ public class UserRegister extends JFrame {
 	private JLabel lblUserName;
 	private JTextField name;
 	private JLabel lblPassword;
+	private JButton btnNewButton;
 
 
 	/**
@@ -154,6 +155,7 @@ public class UserRegister extends JFrame {
 						ps = conn.prepareStatement(insertion, ResultSet.TYPE_SCROLL_SENSITIVE,
 		                        ResultSet.CONCUR_UPDATABLE);
 						ps.executeUpdate();
+						conn.commit();
 						ps.close();
 						JOptionPane.showMessageDialog(null, "Thanks for your registration!");
 						setVisible(false);
@@ -180,6 +182,14 @@ public class UserRegister extends JFrame {
 		userPass.setColumns(10);
 		contentPane.add(userPass, "4, 7, 3, 1, fill, default");
 		contentPane.add(register, "4, 8, fill, top");
+		
+		btnNewButton = new JButton("Cancel");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+			}
+		});
+		contentPane.add(btnNewButton, "6, 8, center, default");
 	}
 	
 	public String getUserEmail() {
