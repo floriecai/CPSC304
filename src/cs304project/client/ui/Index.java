@@ -67,6 +67,17 @@ public class Index extends JFrame {
 	private JPasswordField userPass;
 	private String userEmail;
 	private String userPassword;
+	String cc[] = new String[3];
+	float pp[] = new float[3];
+	JLabel cityImage0 = new JLabel("test");
+	JLabel cityImage1 = new JLabel("test");
+	JLabel cityImage2 = new JLabel("test");
+	JLabel cc0 = new JLabel("city - country");
+	JLabel cc1 = new JLabel("city - country 2");
+	JLabel cc2 = new JLabel("city - country 3");
+	JLabel price0 = new JLabel("Price");
+	JLabel price1 = new JLabel("Price");
+	JLabel price2 = new JLabel("Price");
 
 	private static Listing top3; 
 	/**
@@ -94,17 +105,7 @@ public class Index extends JFrame {
 		setBackground(Color.WHITE);
 		setResizable(false);
 
-		String cc[] = new String[3];
-		float pp[] = new float[3];
-		JLabel cityImage0 = new JLabel("test");
-		JLabel cityImage1 = new JLabel("test");
-		JLabel cityImage2 = new JLabel("test");
-		JLabel cc0 = new JLabel("city - country");
-		JLabel cc1 = new JLabel("city - country 2");
-		JLabel cc2 = new JLabel("city - country 3");
-		JLabel price0 = new JLabel("Price");
-		JLabel price1 = new JLabel("Price");
-		JLabel price2 = new JLabel("Price");
+
 		
 		/*
 		 * Query!!!
@@ -114,32 +115,10 @@ public class Index extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent arg0) {
-				int count = 0;
-				conn = Connecting.getConnection();
-				DecimalFormat df = new DecimalFormat("##.##");
-				top3 = new Listing(conn);
-				try {
-					ResultSet rs = top3.topThree();
-					while(rs.next() && count < 3 ){
-						cc[count] = rs.getString("city").trim() + "-" + rs.getString("country").trim();
-						pp[count] = rs.getFloat("avp");
-						count++;
-					}
-					cc0.setText(cc[0]);
-					cc1.setText(cc[1]);
-					cc2.setText(cc[2]);
-					price0.setText("$" + df.format(pp[0]) + " per day");
-					price1.setText("$" + df.format(pp[1])+ " per day");
-					price2.setText("$" + df.format(pp[2])+ " per day");
-					
-					cityImage0.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc0.getText().substring(0, cc0.getText().indexOf("-")) + ".jpg")));
-					cityImage1.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc1.getText().substring(0, cc1.getText().indexOf("-")) + ".jpg")));
-					cityImage2.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc2.getText().substring(0, cc2.getText().indexOf("-")) + ".jpg")));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				sortByIndexPage(true);
 			}
 		});
+		
 
 		setTitle("Ourhome");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -399,16 +378,78 @@ public class Index extends JFrame {
 			}
 		});
 		
-		JButton btnNewButton = new JButton("New button");
-		panel.add(btnNewButton, "2, 14");
+		JButton ratingSortBtn = new JButton("Sort by rating");
+		panel.add(ratingSortBtn, "2, 14");
+		ratingSortBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					sortByIndexPage(true);
+			}
+			
+		});
+		JButton cheapBtn = new JButton("Cheap location with great ratings!");
+		panel.add(cheapBtn, "4, 14, center, default");
 		
-		JButton btnNewButton_1 = new JButton("New button");
-		panel.add(btnNewButton_1, "4, 14, center, default");
+		cheapBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					sortByIndexPage(false);
+			}
+			
+		});
 		lblStaffArea.setBackground(Color.LIGHT_GRAY);
 		lblStaffArea.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblStaffArea.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblStaffArea, "7, 14, right, bottom");
 	}
+	protected void sortByIndexPage(boolean rating) {
+		// TODO Auto-generated method stub
+		int count = 0;
+		conn = Connecting.getConnection();
+		DecimalFormat df = new DecimalFormat("##.##");
+		ResultSet rs = null;
+		top3 = new Listing(conn);
+
+		if (rating) {
+			rs = top3.topThree();
+		} else {
+			rs = top3.valueSort();
+
+		}
+		try {
+			while(rs.next() && count < 3 ){
+				cc[count] = rs.getString("city").trim() + "-" + rs.getString("country").trim();
+				if (rating)
+					pp[count] = rs.getFloat("avp");
+				else
+					pp[count] = rs.getFloat("min");
+
+				count++;
+			}
+			cc0.setText(cc[0]);
+			cc1.setText(cc[1]);
+			cc2.setText(cc[2]);
+			price0.setText("$" + df.format(pp[0]) + " per day");
+			price1.setText("$" + df.format(pp[1])+ " per day");
+			price2.setText("$" + df.format(pp[2])+ " per day");
+			
+			cityImage0.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc0.getText().substring(0, cc0.getText().indexOf("-")) + ".jpg")));
+			cityImage1.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc1.getText().substring(0, cc1.getText().indexOf("-")) + ".jpg")));
+			cityImage2.setIcon(new ImageIcon(Index.class.getResource("/cs304project/" + cc2.getText().substring(0, cc2.getText().indexOf("-")) + ".jpg")));
+			if (!rating) {
+				stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+						ResultSet.CONCUR_UPDATABLE);
+				String dropView = "DROP VIEW min_price CASCADE CONSTRAINTS";
+				stmt.executeQuery(dropView);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	/*
 	 * Get user name
 	 */
