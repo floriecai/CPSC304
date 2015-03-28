@@ -184,10 +184,10 @@ INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, gove
 INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values( listing_seq.nextval, 299.99, 8, 'T', 4.0, '00003', 'V6T2S2', '789 Shoop Lane');
 INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values( listing_seq.nextval, 399.99, 10, 'F', 4.5, '00004', 'V6T4Q6', '987 Shooped Lane')
 ;
-INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values (listing_seq.nextval, 166.9, 4, 'y', 3.86, '00028', 'T78 S6E', '527 Hudson Street');
+INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values (listing_seq.nextval, 166.9, 4, 'y', 3.86, '00005', 'T78 S6E', '527 Hudson Street');
 
-INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values (listing_seq.nextval, 225.8, 6, 'y', 4.25, '00037', 'V6T4Q6', '480 Simons Lane');
-INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values (listing_seq.nextval, 249.9, 4, 'N', 4.66, '00588', '94118-276', '230 Bobbo Avenue');
+INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values (listing_seq.nextval, 225.8, 6, 'y', 4.25, '00004', 'V6T4Q6', '480 Simons Lane');
+INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values (listing_seq.nextval, 249.9, 4, 'N', 4.66, '12', '94118-276', '230 Bobbo Avenue');
 
 
 INSERT INTO AmenitiesIncluded (amenitiesId, listingId, tv, kitchen, internet, laundry, toiletries) values (amenities_seq.nextval, 1, 'F', 'F', 'F', 'F', 'F');
