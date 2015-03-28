@@ -14,10 +14,10 @@ public class UserQueries {
 		
 		ResultSet rs = null;
 		float transactionTotal = 0;
-		String transactions = "SELECT r. email, sum(t.price) as total "
-				+ "FROM RegisteredUser R, Transaction T, TransactionIdAndEmail TE "
-				+ "WHERE R.email = TE.email AND T.transactionId = TE.transactionId "
-				+ "GROUP BY r.email";
+		String transactions = "SELECT TE.email, sum(t.price) as total "
+				+ "FROM Transaction T, TransactionIdAndEmail TE "
+				+ "WHERE T.transactionId = TE.transactionId AND TE.email LIKE '%" + email +"%' " 
+				+ "GROUP BY TE.email";
 		try {
 			conn = Connecting.getConnection();
 			System.out.println(transactions);
@@ -146,7 +146,7 @@ public class UserQueries {
 			ps.close();
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// handle in UserBoard
 			return false;
 		} 
 	}

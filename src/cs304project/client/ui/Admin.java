@@ -99,7 +99,7 @@ public class Admin extends JFrame {
 		userField.setColumns(10);
 		contentPane.add(userField, "4, 5, left, center");
 
-		JLabel lblAdminName = new JLabel("Admin Name");
+		JLabel lblAdminName = new JLabel("Admin password");
 		contentPane.add(lblAdminName, "2, 6");
 
 		userName = new JTextField();
