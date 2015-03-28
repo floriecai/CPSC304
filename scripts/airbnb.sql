@@ -208,7 +208,7 @@ insert into Verifies VALUES (1, '00002');
 insert into Verifies VALUES (5, '34');
 
 insert into Transaction values (trans_seq.nextval, 200.0, TO_DATE('2015-01-01', 'YYYY-MM-DD'), 2);
-insert into 
+insert into Transaction values (trans_seq.nextval, 249.9, TO_DATE('2015-03-22', 'YYYY-MM-DD'), 
 
 insert into MakesReservation values (resv_seq.nextval, 2, TO_DATE('2015-02-01', 'YYYY-MM-DD'), TO_DATE('2015-02-05', 'YYYY-MM-DD'), 2, 1);
 
