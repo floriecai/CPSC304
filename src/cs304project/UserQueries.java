@@ -20,16 +20,13 @@ public class UserQueries {
 				+ "GROUP BY TE.email";
 		try {
 			conn = Connecting.getConnection();
-			System.out.println(transactions);
 			PreparedStatement ps = conn.prepareStatement(transactions, ResultSet.TYPE_SCROLL_SENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
 			rs = ps.executeQuery();
 			if(rs.next() && email.contains(rs.getString("email"))){
 				transactionTotal = rs.getFloat("total");
-				System.out.println(transactionTotal);
 			}else{
 				transactionTotal = 0;
-				System.out.println(transactionTotal);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -123,14 +120,12 @@ public class UserQueries {
 			conn.commit();
 			
 			String l = "Select listingId from ListingPostedIsIn";
-			System.out.println("Ok");
 			ps= conn.prepareStatement(l, ResultSet.TYPE_SCROLL_SENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = ps.executeQuery(l);
 			if(rs.last()){
 				listingId = rs.getInt("listingId");
 			}
-			System.out.println(listingId);
 			String instAment = "INSERT INTO AmenitiesIncluded (amenitiesId, listingId, tv, kitchen, internet, laundry, toiletries) "
 					+ "values (amenities_seq.nextval, ?, ?, ?, ?, ?, ?)";
 			ps= conn.prepareStatement(instAment, ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -163,7 +158,6 @@ public class UserQueries {
 			rs = ps.executeQuery();
 			if(rs.next()){
 				usersTuples = rs.getString("governmentId");
-				System.out.println(usersTuples);
 			}
 			ps.close();
 			return usersTuples;

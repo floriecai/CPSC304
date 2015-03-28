@@ -137,7 +137,6 @@ public class UserRegister extends JFrame {
 					 * Query!!
 					 */
 					String query = "SELECT email FROM RegisteredUser WHERE email like '%" + userEmail + "%'";
-					System.out.println(query);
 					PreparedStatement ps = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
 	                        ResultSet.CONCUR_UPDATABLE);
 					ResultSet rs = ps.executeQuery();

@@ -7,7 +7,6 @@ public class Main {
 	static Connecting conn;
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		Index index = new Index();
 		conn = new Connecting();	
 		if(conn.connecting()){

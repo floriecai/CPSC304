@@ -111,7 +111,6 @@ public class UserBoard extends JFrame {
 
 		JLabel lblNewLabel_1 = new JLabel("Total amount spent");
 		contentPane.add(lblNewLabel_1, "6, 3, 2, 1, right, top");
-		System.out.println(email);
 		JLabel amount = new JLabel(String.valueOf(uq.amount(email)));
 		contentPane.add(amount, "8, 3, center, top");
 		insertPanel.setVisible(false);

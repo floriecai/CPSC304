@@ -49,7 +49,7 @@ public class Reservation extends Transactions{
 				statement.close(); 
 				ps.close();
 			}
-			else System.out.println("conn is null wtf");
+			else System.out.println("conn is null");
 
 		} catch (SQLException e) {
 			e.printStackTrace();

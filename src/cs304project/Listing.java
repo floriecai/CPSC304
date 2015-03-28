@@ -185,13 +185,11 @@ public class Listing extends Transactions{
 					+ "AND (m.checkindate <= TO_DATE('" + cdIn + "', 'YYYY-MM-DD') AND"
 					+ " m.checkoutdate >= TO_DATE('" +  cdOut + "','YYYY-MM-DD'))) " 
 					+ "ORDER BY " + sortBy;
-			System.out.println(selectAll);
 			ps = conn.prepareStatement(selectAll, ResultSet.TYPE_SCROLL_SENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
 			rs = ps.executeQuery();
 			rs.last();
 			int rowCount = rs.getRow();
-			System.out.println(rowCount);
 			data = new String[rowCount][c.length];
 			listId = new int[rowCount];
 			rs.beforeFirst();
@@ -203,7 +201,6 @@ public class Listing extends Transactions{
 				data[rs.getRow()-1][2] = String.valueOf(rs.getDouble("Rating"));
 				data[rs.getRow()-1][3] = rs.getString("Address");
 				data[rs.getRow()-1][4] = String.valueOf(rs.getDouble("Price"));	 
-				System.out.println(rs.getString("name"));
 			}		
 
 		} catch (SQLException e) {

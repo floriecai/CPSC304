@@ -128,7 +128,6 @@ public class UserLogin extends JFrame {
 					 * Query!!
 					 */
 					String query = "SELECT * FROM RegisteredUser WHERE email LIKE '%"  + userEmail + "%' AND password LIKE '%" + userPassword.toString() + "%'" ;
-					System.out.println(query);
 					PreparedStatement ps = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,
 	                        ResultSet.CONCUR_UPDATABLE);
 					ResultSet rs = ps.executeQuery();

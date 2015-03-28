@@ -99,7 +99,7 @@ public class MakeReservation extends JFrame {
 		DecimalFormat df = new DecimalFormat("##.##");
 		String query = "select distinct * from ListingPostedIsIn l, Host h, RegisteredUser r, Location loc where l.governmentId = h.governmentId "
 				+ "and l.postalCode = loc.postalCode and h.email = r.email and l.listingId = " + list.getSelectedId();
-		System.out.println(query);
+
 		try {
 			conn = Connecting.getConnection();
 			PreparedStatement ps = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_SENSITIVE,

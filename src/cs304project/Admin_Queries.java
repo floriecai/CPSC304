@@ -208,7 +208,6 @@ public class Admin_Queries {
 			
 			if(rs.next()){
 				usersTuples = rs.getString("governmentId");
-				System.out.println(usersTuples);
 			}
 			ps.close();
 			return usersTuples;
@@ -334,7 +333,6 @@ public class Admin_Queries {
 				result = day.substring(0, 11);
 				result = result + ": $";
 				result += rs.getString("avg(price)");
-				System.out.println(result);
 				return result;
 			}
 			
