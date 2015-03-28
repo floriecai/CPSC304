@@ -286,7 +286,7 @@ public class Admin_Queries {
 	public String[][] findTransactionsToday() {
 		ResultSet rs = null;
 		String listings = "SELECT T.transactionId, T.price, T.time, L.city, LP.address FROM Transaction T, ListingPostedIsIn LP, Location L "
-				+ "where LP.listingId = T.listingId AND L.postalCode = LP.postalCode AND T.time = SYSDATE";
+				+ "where LP.listingId = T.listingId AND L.postalCode = LP.postalCode AND TRUNC(T.time) = TRUNC(SYSDATE)";
 		String[][] transactionTuples = null;
 
 		try {
