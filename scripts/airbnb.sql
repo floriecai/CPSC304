@@ -152,6 +152,7 @@ INSERT INTO RegisteredUser VALUES ('felipe@gmail.com', 'florie', 'cai');
 INSERT INTO RegisteredUser VALUES ('simon@gmail.com', 'simon', 'feng');
 insert into RegisteredUser VALUES ('mario@nintendo.com', 'Mario', 'Luigi');
 insert into RegisteredUser VALUES ('sonic@sega.com', 'Sonic', 'Tails');
+insert into RegisteredUser VALUES ('merpo@merpo.com', 'merpo', 'cai');
 
 INSERT INTO Location VALUES ('V6T0B3', 'Vancouver', 'Canada');
 INSERT INTO Location VALUES ('V6T2S2', 'Vancouver', 'Canada');
@@ -205,5 +206,3 @@ insert into TransactionIdAndEmail (transactionId, email) values (1, 'sonic@sega.
 insert into TransactionIdAndEmail (transactionId, email)  values (2, 'mario@nintendo.com');
 
 insert into TransactionIdAndEmail  (transactionId, email) values (3, 'sonic@sega.com');
-
-

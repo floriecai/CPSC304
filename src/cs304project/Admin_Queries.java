@@ -1,6 +1,7 @@
 package cs304project;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -147,8 +148,7 @@ public class Admin_Queries {
 			usersInactive = new String[rowCount][2];
 			rs.beforeFirst();
 			while(rs.next()){
-				usersInactive[rs.getRow()-1][0] = rs.getString("name");
-				usersInactive[rs.getRow()-1][1] = rs.getString("email");
+				usersInactive[rs.getRow()-1][0] = rs.getString("email");
 			}
 			ps.close();
 		} catch (SQLException e) {
@@ -335,24 +335,23 @@ public class Admin_Queries {
 	public String findMinOrMaxAvgTransaction(String agg) {
 		PreparedStatement ps;
 		String result = ""; 
-		String avg = "CREATE VIEW avg_transactions AS "
-				+ "SELECT time, avg(price) as avg_t "
-				+ "FROM Transaction " 
-				+ "GROUP BY time";
+		
 		try {
-			System.out.println(avg);
-			ps = conn.prepareStatement(avg);
-			ps.executeUpdate();
-			
-			String aggregation = "SELECT AT.time as time, " + agg + " (AT.avg_t) "
-					+ "FROM avg_transactions AT";
+			String aggregation = "SELECT time, avg(price) "
+					+ "from transaction " 
+					+ "group by time " 
+					+ "having avg(price) = " 
+					+ "(SELECT " + agg + " (avg(price)) FROM transaction group by time)";
+					
+					
 			ps = conn.prepareStatement(aggregation);
 			ResultSet rs = ps.executeQuery();
 			
 			if (rs.next()) {
-				result = rs.getString("time");
+				String day = rs.getString("time");
+				result = day.substring(0, 11);
 				result = result + ": ";
-				result += rs.getString("average");
+				result += rs.getString("avg(price)");
 				System.out.println(result);
 				return result;
 			}
