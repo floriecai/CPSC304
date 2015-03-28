@@ -145,6 +145,8 @@ INSERT INTO Admin VALUES (001, 'cpsc304', 'cpsc304');
 INSERT INTO Admin VALUES (002, 'florie', 'cai');
 INSERT INTO Admin VALUES (003, 'felipe', 'osorio');
 INSERT INTO Admin VALUES (004, 'gustav', 'staprans');
+INSERT INTO Admin VALUES (005, 'Simon', 'Feng');
+INSERT INTO Admin VALUES (006, 'Shadow', 'Chui');
 
 INSERT INTO RegisteredUser VALUES ('staprans@gmail.com', 'gustav', 'staprans');
 INSERT INTO RegisteredUser VALUES ('floriecai@hotmail.com', 'felipe', 'cai');
@@ -153,6 +155,7 @@ INSERT INTO RegisteredUser VALUES ('simon@gmail.com', 'simon', 'feng');
 insert into RegisteredUser VALUES ('mario@nintendo.com', 'Mario', 'Luigi');
 insert into RegisteredUser VALUES ('sonic@sega.com', 'Sonic', 'Tails');
 insert into RegisteredUser VALUES ('merpo@merpo.com', 'merpo', 'cai');
+INSERT INTO RegisteredUser VALUES ('3beicat@sina.com', 'Dazhao', 'Song');
 
 INSERT INTO Location VALUES ('V6T0B3', 'Vancouver', 'Canada');
 INSERT INTO Location VALUES ('V6T2S2', 'Vancouver', 'Canada');
@@ -161,6 +164,7 @@ INSERT INTO Location VALUES ('V6T4Q6', 'Burnaby', 'Canada');
 insert into Location values ('94133-415', 'San Francisco', 'USA');
 insert into Location values ('T78 S6E', 'Toronto', 'Canada');
 insert into Location values ('V4Q T4D', 'Vancouver', 'Canada');
+INSERT INTO Location values ('94118-276', 'San Francisco', 'USA');
 
 insert into Host VALUES ('12', 'mario@nintendo.com', '777896548');
 insert into Host VALUES ('34', 'sonic@sega.com', '1235678910');
@@ -168,6 +172,7 @@ INSERT INTO Host VALUES ('00001', 'staprans@gmail.com', '1111111111');
 INSERT INTO Host VALUES ('00002', 'floriecai@hotmail.com', '2222222222');
 INSERT INTO Host VALUES ('00003', 'felipe@gmail.com', '3333333333');
 INSERT INTO Host VALUES ('00004', 'simon@gmail.com', '4444444444');
+INSERT INTO Host VALUES ('00005', 'simonfengqy@126.com', '123467890');
 
 insert into ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values( listing_seq.nextval, 90.0, 3, 'y', 4.5, '12', 'V4Q T4D', '200 Wow street');
 insert into ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values( listing_seq.nextval, 50.0, 4, 'y', 3.5, '34', '94133-415', '100 Hey street');
@@ -176,7 +181,13 @@ insert into ListingPostedIsIn (listingId, price, capacity, private, rating, gove
 INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values( listing_seq.nextval, 99.99, 4, 'T', 4.0, '00001', 'V6T0B3', '123 Moop Lane');
 INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values( listing_seq.nextval, 199.99, 6, 'F', 5.0, '00002', 'V6T0B3', '321 Mooped Lane');
 INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values( listing_seq.nextval, 299.99, 8, 'T', 4.0, '00003', 'V6T2S2', '789 Shoop Lane');
-INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values( listing_seq.nextval, 399.99, 10, 'F', 4.5, '00004', 'V6T4Q6', '987 Shooped Lane');
+INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values( listing_seq.nextval, 399.99, 10, 'F', 4.5, '00004', 'V6T4Q6', '987 Shooped Lane')
+;
+INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values (listing_seq.nextval, 166.9, 4, 'y', 3.86, '00028', 'T78 S6E', '527 Hudson Street');
+
+INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values (listing_seq.nextval, 225.8, 6, 'y', 4.25, '00037', 'V6T4Q6', '480 Simons Lane');
+INSERT INTO ListingPostedIsIn (listingId, price, capacity, private, rating, governmentId, postalCode, address) values (listing_seq.nextval, 249.9, 4, 'N', 4.66, '00588', '94118-276', '230 Bobbo Avenue');
+
 
 INSERT INTO AmenitiesIncluded (amenitiesId, listingId, tv, kitchen, internet, laundry, toiletries) values (amenities_seq.nextval, 1, 'F', 'F', 'F', 'F', 'F');
 INSERT INTO AmenitiesIncluded (amenitiesId, listingId, tv, kitchen, internet, laundry, toiletries) values (amenities_seq.nextval, 2, 'T', 'F', 'T', 'F', 'F');
@@ -186,23 +197,44 @@ INSERT INTO AmenitiesIncluded (amenitiesId, listingId, tv, kitchen, internet, la
 INSERT INTO AmenitiesIncluded (amenitiesId, listingId, tv, kitchen, internet, laundry, toiletries) values (amenities_seq.nextval, 6, 'T', 'T', 'F', 'T', 'F');
 INSERT INTO AmenitiesIncluded (amenitiesId, listingId, tv, kitchen, internet, laundry, toiletries) values (amenities_seq.nextval, 7, 'T', 'T', 'T', 'T', 'T');
 INSERT INTO AmenitiesIncluded (amenitiesId, listingId, tv, kitchen, internet, laundry, toiletries) values (amenities_seq.nextval, 8, 'T', 'F', 'F', 'T', 'F');
+INSERT INTO AmenitiesIncluded (amenitiesId, listingId, tv, kitchen, internet, laundry, toiletries) values (amenities_seq.nextval, 9, 'T', 'T', 'T', 'T', 'F');
+INSERT INTO AmenitiesIncluded (amenitiesId, listingId, tv, kitchen, internet, laundry, toiletries) values (amenities_seq.nextval, 10, 'F', 'T', 'T', 'F', 'T');
+INSERT INTO AmenitiesIncluded (amenitiesId, listingId, tv, kitchen, internet, laundry, toiletries) values (amenities_seq.nextval, 11, 'F', 'T', 'F', 'F', 'T');
 
 insert into Verifies VALUES (3, '00001');
+insert into Verifies VALUES (6, '00004');
+INSERT into Verifies VALUES (3, '12');
+insert into Verifies VALUES (1, '00002');
+insert into Verifies VALUES (5, '34');
 
 insert into Transaction values (trans_seq.nextval, 200.0, TO_DATE('2015-01-01', 'YYYY-MM-DD'), 2);
-
-insert into MakesReservation values (resv_seq.nextval, 2, TO_DATE('2015-02-01', 'YYYY-MM-DD'), TO_DATE('2015-02-05', 'YYYY-MM-DD'), 2, 1);
-
+insert into Transaction values (trans_seq.nextval, 249.9, TO_DATE('2015-03-22', 'YYYY-MM-DD'), 3);
+insert into Transaction values (trans_seq.nextval, 258.9, TO_DATE('2015-03-17', 'YYYY-MM-DD'), 4);
+insert into Transaction values (trans_seq.nextval, 249.9, TO_DATE('2014-06-22', 'YYYY-MM-DD'), 3);
+insert into Transaction values (trans_seq.nextval, 399.9, TO_DATE('2012-12-22', 'YYYY-MM-DD'), 6);
+insert into Transaction values (trans_seq.nextval, 188.8, TO_DATE('2014-08-30', 'YYYY-MM-DD'), 8);
+insert into Transaction values (trans_seq.nextval, 409.9, TO_DATE('2015-01-12', 'YYYY-MM-DD'), 1);
+INSERT INTO Transaction values (trans_seq.nextval, 289.9, TO_DATE('2014-09-15', 'YYYY-MM-DD'), 10);
+insert into Transaction values (trans_seq.nextval, 358.8, TO_DATE('2015-01-10', 'YYYY-MM-DD'), 11);
 insert into Transaction (transactionId, price, time, listingId) values(trans_seq.nextval, 199.0, TRUNC(SYSDATE), 6);
-
-insert into MakesReservation values (resv_seq.nextval, 6, TO_DATE('2015-03-06', 'YYYY-MM-DD'), TO_DATE('2015-03-07', 'YYYY-MM-DD'), 4, 2);
-
 insert into Transaction (transactionId, price, time, listingId) values(trans_seq.nextval, 199.0, TO_DATE('2015-01-01', 'YYYY-MM-DD'), 6);
 
+insert into MakesReservation values (resv_seq.nextval, 1, TO_DATE('2015-01-01', 'YYYY-MM-DD'), TO_DATE('2015-01-05', 'YYYY-MM-DD'), 2, 8);
+insert into MakesReservation values (resv_seq.nextval, 2, TO_DATE('2014-11-01', 'YYYY-MM-DD'), TO_DATE('2014-11-07', 'YYYY-MM-DD'), 2, 6);
+insert into MakesReservation values (resv_seq.nextval, 3, TO_DATE('2015-02-01', 'YYYY-MM-DD'), TO_DATE('2015-02-02', 'YYYY-MM-DD'), 3, 4);
+insert into MakesReservation values (resv_seq.nextval, 4, TO_DATE('2014-02-01', 'YYYY-MM-DD'), TO_DATE('2014-04-05', 'YYYY-MM-DD'), 4, 2);
+insert into MakesReservation values (resv_seq.nextval, 5, TO_DATE('2015-01-08', 'YYYY-MM-DD'), TO_DATE('2015-01-10', 'YYYY-MM-DD'), 3, 5);
+insert into MakesReservation values (resv_seq.nextval, 6, TO_DATE('2015-01-17', 'YYYY-MM-DD'), TO_DATE('2015-01-26', 'YYYY-MM-DD'), 2, 3);
+insert into MakesReservation values (resv_seq.nextval, 7, TO_DATE('2013-08-31', 'YYYY-MM-DD'), TO_DATE('2014-01-16', 'YYYY-MM-DD'), 1, 7);
+insert into MakesReservation values (resv_seq.nextval, 8, TO_DATE('2014-12-21', 'YYYY-MM-DD'), TO_DATE('2015-01-02', 'YYYY-MM-DD'), 2, 3);
+insert into MakesReservation values (resv_seq.nextval, 9, TO_DATE('2015-02-07', 'YYYY-MM-DD'), TO_DATE('2015-02-12', 'YYYY-MM-DD'), 3, 6);
+insert into MakesReservation values (resv_seq.nextval, 6, TO_DATE('2015-03-06', 'YYYY-MM-DD'), TO_DATE('2015-03-07', 'YYYY-MM-DD'), 4, 2);
 insert into MakesReservation values (resv_seq.nextval, 6, TO_DATE('2015-04-06', 'YYYY-MM-DD'), TO_DATE('2015-04-07', 'YYYY-MM-DD'), 4, 2);
 
 insert into TransactionIdAndEmail (transactionId, email) values (1, 'sonic@sega.com');
-
 insert into TransactionIdAndEmail (transactionId, email)  values (2, 'mario@nintendo.com');
-
 insert into TransactionIdAndEmail  (transactionId, email) values (3, 'sonic@sega.com');
+insert into TransactionIdAndEmail  (transactionId, email) values (4, 'sonic@sega.com');
+insert into TransactionIdAndEmail (transactionId, email) values (5, '3beicat@sina.com');
+insert into TransactionIdAndEmail (transactionId, email) values (6, 'simon@gmail.com');
+insert into TransactionIdAndEmail  (transactionId, email) values (7, 'felipe@gmail.com');
