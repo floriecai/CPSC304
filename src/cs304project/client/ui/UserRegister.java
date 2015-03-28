@@ -32,8 +32,6 @@ import com.jgoodies.forms.factories.FormFactory;
 
 import java.awt.Font;
 
-import javax.swing.SwingConstants;
-
 public class UserRegister extends JFrame {
 
 	private JPanel contentPane;
@@ -116,7 +114,6 @@ public class UserRegister extends JFrame {
 		JButton register = new JButton("Register");
 		register.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Statement stmt;
 				register.setEnabled(false);
 				if(userField.getText().length() > 0 && userPass.getPassword().toString().length() > 0 && name.getText().length() > 0){
 					if (!userField.getText().contains("@")) {

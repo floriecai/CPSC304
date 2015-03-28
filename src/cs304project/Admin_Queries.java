@@ -1,23 +1,14 @@
 package cs304project;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import cs304project.client.ui.AdminBoard;
 
 public class Admin_Queries {
 	
 	private static Connection conn; 
 	private static int admin;
-	
-	public Admin_Queries() {
-		//super(conn); 
-	}
 	
 	public ResultSet allRegisteredUsers() {
 		String all = "SELECT * FROM RegisteredUsers";
@@ -26,14 +17,11 @@ public class Admin_Queries {
 		ResultSet rs = null; 
 		
 		try {
-			
 			ps = conn.prepareStatement(all);
 			rs = ps.executeQuery(); 
-
 			ps.close(); 
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		return rs;
@@ -96,7 +84,6 @@ public class Admin_Queries {
 		String admins = "SELECT DISTINCT * FROM admin WHERE adminId = "  + adminId + " AND password LIKE '%" + password + "%'" ;
 		PreparedStatement ps = null;
 		ResultSet rs = null; 
-		List<String> args = null;
 		conn = Connecting.getConnection();
 		try {
 			ps = conn.prepareStatement(admins);
@@ -110,7 +97,6 @@ public class Admin_Queries {
 					}
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			ps.close();
@@ -160,8 +146,6 @@ public class Admin_Queries {
 	// Verifies an user, inserting his governmentID into Verified table
 	public boolean verifyUser(int adminId, String governmentId) {
 
-		ResultSet rs = null;
-
 		PreparedStatement ps; 
 
 		try {
@@ -206,7 +190,6 @@ public class Admin_Queries {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
-		// TODO Auto-generated method stub
 		return usersTuples;
 	}
 	
@@ -233,7 +216,6 @@ public class Admin_Queries {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
-		// TODO Auto-generated method stub
 		return usersTuples;
 	}
 	
@@ -304,7 +286,7 @@ public class Admin_Queries {
 	public String[][] findTransactionsToday() {
 		ResultSet rs = null;
 		String listings = "SELECT T.transactionId, T.price, T.time, L.city, LP.address FROM Transaction T, ListingPostedIsIn LP, Location L "
-				+ "where LP.listingId = T.listingId AND L.postalCode = LP.postalCode AND T.time = TRUNC(SYSDATE)";
+				+ "where LP.listingId = T.listingId AND L.postalCode = LP.postalCode AND T.time = SYSDATE";
 		String[][] transactionTuples = null;
 
 		try {
@@ -350,7 +332,7 @@ public class Admin_Queries {
 			if (rs.next()) {
 				String day = rs.getString("time");
 				result = day.substring(0, 11);
-				result = result + ": ";
+				result = result + ": $";
 				result += rs.getString("avg(price)");
 				System.out.println(result);
 				return result;

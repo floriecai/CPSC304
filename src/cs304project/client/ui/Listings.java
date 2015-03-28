@@ -11,7 +11,6 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
@@ -35,8 +34,6 @@ import java.awt.event.MouseEvent;
 import java.sql.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -50,7 +47,6 @@ public class Listings extends JFrame {
 	private JTextField txtCity;
 	private static Connection conn;
 	private JTable table;
-	private Listing list;
 	private static JTable localTable;
 	private UserLogin userLogin;
 	DefaultTableModel searchTableModel;
@@ -135,10 +131,6 @@ public class Listings extends JFrame {
 						amenities[i] = 'F';
 				}
 				conn = Connecting.getConnection();
-
-				/*
-				 * Query!
-				 */
 
 				if (city.equals("") || cdIn.equals("") || cdOut.equals("") || city.equals("City") || cdIn.equals("Check In: YYYY-MM-DD")
 						|| cdOut.equals("Check Out: YYYY-MM-DD"))

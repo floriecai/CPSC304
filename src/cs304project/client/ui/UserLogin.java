@@ -10,6 +10,7 @@ import java.awt.Color;
 
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -31,7 +32,6 @@ import com.jgoodies.forms.factories.FormFactory;
 
 import java.awt.Font;
 
-import javax.swing.SwingConstants;
 
 public class UserLogin extends JFrame {
 
@@ -39,11 +39,9 @@ public class UserLogin extends JFrame {
 	private JTextField userField;
 	private JLabel lblUser;
 	private Connection conn;
-	private AdminBoard adb;
 	private JPasswordField userPass;
 	private String userEmail;
 	private String userPassword;
-	private boolean logged;
 	private MakeReservation mk;
 
 
@@ -135,13 +133,12 @@ public class UserLogin extends JFrame {
 	                        ResultSet.CONCUR_UPDATABLE);
 					ResultSet rs = ps.executeQuery();
 					if(rs.next()){
-						logged = true;
 						mk = new MakeReservation(userEmail);
 						mk.setVisible(true);
 					} else
-						logged = false;
+						JOptionPane.showMessageDialog(null, "Login failed");
 				} catch (SQLException e) {
-					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Login failed");
 				}
 			}
 		});

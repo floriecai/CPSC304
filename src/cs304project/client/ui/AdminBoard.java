@@ -405,7 +405,7 @@ public class AdminBoard extends JFrame {
 				listing = new Listing(conn);
 				String transactionAvg;
 				transactionAvg = admin.findMinOrMaxAvgTransaction("min");
-				JOptionPane.showMessageDialog(null, "Minimum average: $" +transactionAvg);
+				JOptionPane.showMessageDialog(null, "Minimum average: " +transactionAvg);
 			}
 		});
 		panelTransactions.add(btnMavg);
@@ -418,7 +418,7 @@ public class AdminBoard extends JFrame {
 				listing = new Listing(conn);
 				String transactionAvg;
 				transactionAvg = admin.findMinOrMaxAvgTransaction("max");
-				JOptionPane.showMessageDialog(null, "Maximum average: $" + transactionAvg);
+				JOptionPane.showMessageDialog(null, "Maximum average: " + transactionAvg);
 			}
 		});
 		panelTransactions.add(btnMaximumAvg);

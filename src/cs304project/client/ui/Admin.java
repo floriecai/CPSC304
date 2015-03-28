@@ -10,14 +10,13 @@ import java.awt.Color;
 
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import cs304project.Admin_Queries;
@@ -114,7 +113,6 @@ public class Admin extends JFrame {
 		 */
 		login.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Statement stmt;
 				if(userField.getText() != null && userName.getText() != null){
 					adminId = userField.getText().trim();
 					adminPassword = userName.getText().trim();
@@ -128,7 +126,7 @@ public class Admin extends JFrame {
 					System.out.println("Successful login");	
 					setVisible(false);
 				} else {
-					System.out.println("Failed login");	
+					JOptionPane.showMessageDialog(null, "Failed login!");
 				}
 
 

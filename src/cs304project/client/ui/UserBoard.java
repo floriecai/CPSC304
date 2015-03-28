@@ -13,8 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.util.Calendar;
 
 import javax.swing.JScrollPane;
 
@@ -34,7 +32,6 @@ import java.awt.SystemColor;
 import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JTextPane;
 
 public class UserBoard extends JFrame {
 

@@ -14,13 +14,7 @@ import java.awt.Color;
 
 import javax.swing.SwingConstants;
 
-import java.awt.FlowLayout;
-
-import javax.swing.BoxLayout;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.JPasswordField;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextField;
 
 import java.awt.Font;
@@ -31,8 +25,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Component;
 import java.awt.SystemColor;
-
-import javax.swing.UIManager;
 
 import cs304project.Connecting;
 import cs304project.Listing;
@@ -47,7 +39,6 @@ import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.Label;
 import java.awt.Dimension;
 
 import com.jgoodies.forms.layout.FormLayout;
@@ -66,8 +57,6 @@ public class Index extends JFrame {
 	private UserBoard usb;
 	private static Statement stmt;
 	private JPasswordField userPass;
-	private String userEmail;
-	private String userPassword;
 	String cc[] = new String[3];
 	float pp[] = new float[3];
 	JLabel cityImage0 = new JLabel("test");
@@ -105,13 +94,6 @@ public class Index extends JFrame {
 	public Index() {
 		setBackground(Color.WHITE);
 		setResizable(false);
-
-
-		
-		/*
-		 * Query!!!
-		 * Return the top 3 locations with best rating and the avg price of their listings - Need to change the query to get price and avg rating
-		 */
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -179,12 +161,7 @@ public class Index extends JFrame {
 		JButton search = new JButton("Search");
 		search.setAlignmentX(Component.CENTER_ALIGNMENT);
 		search.addActionListener(new ActionListener() {
-			/*
-			 * (non-Javadoc)
-			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-			 * Get the results of the search executed by the user, returning all available listings 
-			 * in a specific city
-			 */
+
 			public void actionPerformed(ActionEvent e) {
 				search.setEnabled(false);
 				String c[] = {"Host", "Capacity", "Rating", "Address", "Price"};
@@ -197,9 +174,7 @@ public class Index extends JFrame {
 					search.setEnabled(true);
 					return;
 				}
-				/*
-				 * Query!!!
-				 */
+
 				String query = "select * from ListingPostedIsIn l, Host h, RegisteredUser r where h.governmentId = l.governmentId and r.email = h.email and l.listingId in " +
 						"(select distinct l.listingId from Location loc where l.postalCode = loc.postalCode and loc.city like '%" + city + "%')";
 				
@@ -221,7 +196,6 @@ public class Index extends JFrame {
 						data[rs.getRow()-1][4] = String.valueOf(rs.getDouble("Price"));
 					}
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				listing = new Listings(c, data);
@@ -265,11 +239,6 @@ public class Index extends JFrame {
 		JButton logIn = new JButton("Log in");
 		logIn.setAlignmentX(Component.CENTER_ALIGNMENT);
 		logIn.addActionListener(new ActionListener() {
-			/*
-			 * (non-Javadoc)
-			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-			 * Registered user login - not full implemented yet
-			 */
 			public void actionPerformed(ActionEvent arg0){
 				String userId = null;
 				String userPassword = null;
@@ -417,7 +386,6 @@ public class Index extends JFrame {
 		panel.add(lblStaffArea, "7, 14, right, bottom");
 	}
 	protected void sortByIndexPage(boolean rating) {
-		// TODO Auto-generated method stub
 		int count = 0;
 		conn = Connecting.getConnection();
 		DecimalFormat df = new DecimalFormat("##.##");

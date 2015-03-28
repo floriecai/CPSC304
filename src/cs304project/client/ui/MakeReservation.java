@@ -1,18 +1,13 @@
 package cs304project.client.ui;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 
@@ -26,10 +21,8 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.RowSpec;
 
 import cs304project.Connecting;
-import cs304project.Listing;
 import cs304project.Reservation;
 
-import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
 import javax.swing.JRadioButton;
@@ -101,7 +94,6 @@ public class MakeReservation extends JFrame {
 		JLabel price = null;
 
 		/*
-		 * Query!
 		 * Check the selected place by its listingId and returns all the info related with it (all listing, location, host)
 		 */
 		DecimalFormat df = new DecimalFormat("##.##");
