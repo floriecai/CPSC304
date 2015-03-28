@@ -363,19 +363,26 @@ public class Admin_Queries {
 	}
 	
 	public String findAvgTransactionsEachDay() {
+		
+		String del = "drop view daily_transactions";
+		
 		String s = "CREATE VIEW daily_transactions AS "
 				+ " SELECT T.time, SUM(price) as sum "
 				+ "FROM Transaction T " 
 				+ "GROUP BY T.time ";
 		try {
-			PreparedStatement ps = conn.prepareStatement(s);
+			PreparedStatement ps = conn.prepareStatement(del);
+			ps.executeUpdate(); 
+			ps.close();
+			
+			ps = conn.prepareStatement(s);
 			String avg = "";
 			ps.executeUpdate(); 
 			ps.close();
 			
-			String ss = "select AVG(DT.sum) as avg"
+			String ss = "select AVG(DT.sum) as avg "
 					+ "from daily_transactions DT";
-			ps = conn.prepareStatement(s);
+			ps = conn.prepareStatement(ss);
 			
 			ResultSet rs = ps.executeQuery(); 
 			if (rs.next()) {
