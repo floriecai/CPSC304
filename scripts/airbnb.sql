@@ -156,6 +156,7 @@ insert into RegisteredUser VALUES ('mario@nintendo.com', 'Mario', 'Luigi');
 insert into RegisteredUser VALUES ('sonic@sega.com', 'Sonic', 'Tails');
 insert into RegisteredUser VALUES ('merpo@merpo.com', 'merpo', 'cai');
 INSERT INTO RegisteredUser VALUES ('3beicat@sina.com', 'Dazhao', 'Song');
+insert into RegisteredUser VALUES ('simonfengqy@126.com', 'Qingyuan', 'Feng');
 
 INSERT INTO Location VALUES ('V6T0B3', 'Vancouver', 'Canada');
 INSERT INTO Location VALUES ('V6T2S2', 'Vancouver', 'Canada');
